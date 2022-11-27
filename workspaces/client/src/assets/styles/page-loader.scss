@@ -1,0 +1,61 @@
+@keyframes pageLoader {
+  0% {
+    transform: rotate(0deg) translateY($pageLoaderRadius);
+  }
+  60%,
+  100% {
+    transform: rotate(360deg) translateY($pageLoaderRadius);
+  }
+}
+
+@keyframes pageLoaderBlur {
+  from {
+    backdrop-filter: blur(0px);
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0);
+  }
+  to {
+    backdrop-filter: blur(2px);
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+}
+
+.pageLoaderWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pageLoaderBlur 3s ease-in-out forwards;
+
+  .pageLoader {
+    height: $pageLoaderSize;
+    position: relative;
+    width: $pageLoaderSize;
+
+    div {
+      animation: pageLoader $pageLoaderDuration infinite backwards
+      cubic-bezier(0.645, 0.045, 0.355, 1);
+      background-color: $primaryColor;
+      border-radius: 100%;
+      height: 100%;
+      position: absolute;
+      width: 100%;
+
+      @for $el from 1 through $pageLoaderCircles {
+        &:nth-child(#{$el}) {
+          animation-delay: #{$el * 0.1s};
+          background-color: transparentize(
+                          $primaryColor,
+                          (($el / 2) * 20) / 100
+          );
+        }
+      }
+    }
+  }
+}

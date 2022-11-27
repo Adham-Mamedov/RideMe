@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "baseUrl": "workspaces",
+    "paths": {
+      "@client/*": ["client/src/*"],
+      "@shared/*": ["shared/*"],
+      "@server/*": ["server/src/*"]
+    }
+  }
+}
