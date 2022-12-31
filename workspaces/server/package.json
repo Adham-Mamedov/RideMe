@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "prebuild": "rimraf dist ",
+    "prisma:init": "yarn prisma migrate dev --name \"init\" --schema=./prisma/base.prisma",
+    "prisma:generate": "yarn prisma generate --schema=./prisma/base.prisma",
+    "prisma:build": "yarn prisma:generate",
+    "prebuild": "rimraf dist && yarn prisma:build",
     "build": "nest build",
     "dev": "yarn prebuild && nest start --watch",
     "start": "node dist/server/src/main",
@@ -11,6 +14,7 @@
     "lint": "eslint \"./**/*.[jt]s?(x)\" --fix"
   },
   "dependencies": {
+    "@prisma/client": "^4.6.1",
     "@fastify/cookie": "^8.3.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
@@ -30,6 +34,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "fastify": "^4.10.2",
+    "prisma": "^4.8.0",
     "source-map-support": "^0.5.21"
   }
 }

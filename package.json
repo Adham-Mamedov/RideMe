@@ -9,6 +9,7 @@
   "scripts": {
     "client": "dotenv -e .env yarn workspace client",
     "server": "dotenv -e .env yarn workspace server",
+    "db:initialize": "dotenv -e .env yarn workspace server prisma:init",
     "clean:outputs": "rimraf workspaces/client/.next workspaces/server/dist",
     "clean:modules": "rimraf node_modules workspaces/client/node_modules workspaces/server/node_modules",
     "clean:all": "yarn clean:outputs && yarn clean:modules",
@@ -23,7 +24,6 @@
     "start": "cross-env NODE_ENV=production yarn pretify \"yarn client start\" \"yarn server start\""
   },
   "dependencies": {
-    "@prisma/client": "^4.6.1",
     "axios": "^1.1.3"
   },
   "devDependencies": {

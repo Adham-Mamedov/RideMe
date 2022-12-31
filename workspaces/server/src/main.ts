@@ -9,6 +9,7 @@ import fastifyCookie from '@fastify/cookie';
 
 import AppConfig from '@server/app.config';
 import { AppModule } from '@server/app.module';
+import { PrismaService } from '@server/modules/prisma/prisma.service';
 
 import { Route } from '@shared/enums';
 
@@ -35,6 +36,9 @@ import { Route } from '@shared/enums';
       prefix: '__Host-',
       parseOptions: { httpOnly: true, maxAge: 300, path: Route.Api },
     });
+
+  const prismaService: PrismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
 
   await app.listen(appPort, '::');
   const mode = process.env.NODE_ENV || 'development';
