@@ -14,13 +14,15 @@
     "lint": "eslint \"./**/*.[jt]s?(x)\" --fix"
   },
   "dependencies": {
-    "@prisma/client": "^4.6.1",
     "@fastify/cookie": "^8.3.0",
+    "@fastify/static": "^6.6.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/event-emitter": "^1.3.1",
     "@nestjs/platform-fastify": "^9.2.1",
+    "@nestjs/swagger": "^6.1.4",
+    "@prisma/client": "^4.6.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "reflect-metadata": "^0.1.13",
