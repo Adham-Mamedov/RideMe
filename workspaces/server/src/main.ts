@@ -8,7 +8,7 @@ import { ConfigType } from '@nestjs/config';
 import fastifyCookie from '@fastify/cookie';
 
 import AppConfig from '@server/app.config';
-import { AppModule } from '@server/app.module';
+import { AppModule } from '@server/modules/app/app.module';
 import { PrismaService } from '@server/modules/prisma/prisma.service';
 
 import { Route } from '@shared/enums';
