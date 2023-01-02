@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ConsoleLogger, Logger, ValidationPipe } from '@nestjs/common';
 import {
   FastifyAdapter,
@@ -6,10 +6,10 @@ import {
 } from '@nestjs/platform-fastify';
 import { ConfigType } from '@nestjs/config';
 import fastifyCookie from '@fastify/cookie';
+import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
 
 import AppConfig from '@server/app.config';
 import { AppModule } from '@server/modules/app/app.module';
-import { PrismaService } from '@server/modules/prisma/prisma.service';
 
 import { Route } from '@shared/enums';
 
@@ -25,20 +25,23 @@ import { Route } from '@shared/enums';
     }
   );
 
+  const mode = process.env.NODE_ENV || 'development';
   const appConfig = app.get<ConfigType<typeof AppConfig>>(AppConfig.KEY);
   const { appPort, appSecret } = appConfig;
-  const mode = process.env.NODE_ENV || 'development';
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  const prismaService: PrismaService = app.get(PrismaService);
 
   app
     .useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
     .setGlobalPrefix(Route.Api)
+    .useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
     .register(fastifyCookie, {
       secret: appSecret,
       prefix: '__Host-',
       parseOptions: { httpOnly: true, maxAge: 300, path: Route.Api },
     });
 
-  const prismaService: PrismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
 
   if (mode === 'development') {
