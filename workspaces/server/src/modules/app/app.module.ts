@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import AppConfig from '@server/app.config';
+import { PrismaModule } from 'nestjs-prisma';
 import { AppService } from '@server/modules/app/app.service';
 import { AppController } from '@server/modules/app/app.controller';
-import { PrismaModule } from 'nestjs-prisma';
+import { UserModule } from '@server/modules/user/user.module';
+import { AuthModule } from '@server/modules/auth/auth.module';
 
+import AppConfig from '@server/app.config';
 import { validateEnv } from '@server/common/utils/validation.utils';
 
 @Module({
@@ -16,7 +18,9 @@ import { validateEnv } from '@server/common/utils/validation.utils';
       load: [AppConfig],
       validate: validateEnv,
     }),
+    AuthModule,
     PrismaModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

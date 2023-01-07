@@ -1,7 +1,8 @@
 import { User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '@shared/enums';
 
-export class UserEntity implements User {
+export class UserEntity implements Partial<User> {
   @ApiProperty()
   id: number;
 
@@ -10,4 +11,7 @@ export class UserEntity implements User {
 
   @ApiProperty()
   name: string;
+
+  @ApiProperty()
+  role: Role;
 }

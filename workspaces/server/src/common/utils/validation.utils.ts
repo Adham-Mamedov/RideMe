@@ -19,6 +19,10 @@ class EnvVars {
   @IsNumberString() APP_PORT: string;
   @IsString() API_SECRET: string;
   @IsString() APP_HOST: string;
+  @IsString() DATABASE_URL: string;
+  @IsNumberString() BCRYPT_ROUNDS: string;
+  @IsString() JWT_SECRET: string;
+  @IsString() JWT_REFRESH_SECRET: string;
 }
 
 export const validateObject = <T>(type: ClassConstructor<T>, obj = {}) => {

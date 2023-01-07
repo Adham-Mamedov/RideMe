@@ -8,9 +8,18 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  password     String  @default("NULL")
+  name         String  @default("NULL")
+  role         Role    @default(User)
+  refreshToken String?
 
   @@map("users")
+}
+
+enum Role {
+  Admin
+  User
+  Owner
 }
