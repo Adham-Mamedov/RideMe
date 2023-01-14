@@ -3,17 +3,22 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'nestjs-prisma';
+import { FastifyReply } from 'fastify';
 
 import AppConfig from '@server/app.config';
 import { UserService } from '@server/modules/user/user.service';
 import { exclude } from '@shared/utils/object.utils';
-import { ExpirationTime } from '@server/modules/auth/strategies/jwt.strategy';
+import {
+  AccessTokenCookieName,
+  ExpirationTime,
+  RefreshTokenCookieName,
+} from '@server/modules/auth/strategies';
 
 import { User } from '@prisma/client';
 import { ErrorCodes } from '@shared/enums';
 import { RequestUser } from '@shared/types/auth.types';
-import { AuthEntity } from '@server/modules/auth/entities/auth.entity';
 import { LoginDto } from '@server/modules/auth/dto/auth.dto';
+import { SuccessEntity } from '@server/common/entities/common.entities';
 
 @Injectable()
 export class AuthService {
@@ -38,10 +43,26 @@ export class AuthService {
     return exclude<User, 'password'>(user, ['password']);
   }
 
-  async generateTokens(
+  setCookieWithJwtToken(
+    res: FastifyReply,
+    token: string,
+    isAccessToken = false
+  ) {
+    const name = isAccessToken ? AccessTokenCookieName : RefreshTokenCookieName;
+    const expirationTime = isAccessToken
+      ? ExpirationTime.accessToken
+      : ExpirationTime.refreshToken;
+    res.setCookie(name, token, {
+      secure: !this.appConfig.isDev,
+      maxAge: expirationTime,
+    });
+  }
+
+  async handleTokenUpdates(
+    res: FastifyReply,
     reqUser: RequestUser,
     oldRefreshToken?: string
-  ): Promise<AuthEntity> {
+  ) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: reqUser.id,
@@ -56,31 +77,43 @@ export class AuthService {
     }
     delete user.refreshToken;
 
+    const accessToken = this.jwtService.sign(user, {
+      secret: this.appConfig.jwtSecret,
+      expiresIn: ExpirationTime.accessToken,
+    });
     const refreshToken = this.jwtService.sign(user, {
+      secret: this.appConfig.jwtRefreshSecret,
       expiresIn: ExpirationTime.refreshToken,
     });
-    const accessToken = this.jwtService.sign(user);
+
     await this.userService.updateUserToken(user, refreshToken);
-    return {
-      accessToken,
-      refreshToken,
-    };
+
+    this.setCookieWithJwtToken(res, refreshToken);
+    this.setCookieWithJwtToken(res, accessToken, true);
+
+    return { success: true };
   }
 
-  async login(loginDto: LoginDto): Promise<AuthEntity> {
+  async login(res: FastifyReply, loginDto: LoginDto): Promise<SuccessEntity> {
     try {
       const user = await this.validateUser(loginDto);
-      return this.generateTokens(user);
+      return await this.handleTokenUpdates(res, user);
     } catch (error) {
       throw error;
     }
   }
 
-  async refresh(user: RequestUser, incomingToken: string): Promise<AuthEntity> {
-    const oldToken = incomingToken?.replace('Bearer', '')?.trim();
-    if (!oldToken) {
-      throw new BadRequestException(ErrorCodes.InvalidRefreshToken);
-    }
-    return await this.generateTokens(user, oldToken);
+  logout(res: FastifyReply): SuccessEntity {
+    res.clearCookie(AccessTokenCookieName);
+    res.clearCookie(RefreshTokenCookieName);
+    return { success: true };
+  }
+
+  async refresh(
+    res: FastifyReply,
+    user: RequestUser,
+    incomingToken: string
+  ): Promise<SuccessEntity> {
+    return this.handleTokenUpdates(res, user, incomingToken);
   }
 }

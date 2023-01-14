@@ -39,7 +39,7 @@ import { Route } from '@shared/enums';
     .register(fastifyCookie, {
       secret: appSecret,
       prefix: '__Host-',
-      parseOptions: { httpOnly: true, maxAge: 300, path: Route.Api },
+      parseOptions: { httpOnly: true, maxAge: 300, path: '/' },
     });
 
   await prismaService.enableShutdownHooks(app);

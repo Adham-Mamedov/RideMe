@@ -6,21 +6,24 @@ import { User } from '@prisma/client';
 
 import AppConfig from '@server/app.config';
 import {
-  AccessTokenCookieName,
   cookieExtractor,
+  RefreshTokenCookieName,
 } from '@server/modules/auth/strategies/index';
 import { RequestUser } from '@shared/types/auth.types';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh'
+) {
   constructor(
     @Inject(AppConfig.KEY)
     private readonly appConfig: ConfigType<typeof AppConfig>
   ) {
     super({
-      jwtFromRequest: cookieExtractor(AccessTokenCookieName),
+      jwtFromRequest: cookieExtractor(RefreshTokenCookieName),
       ignoreExpiration: false,
-      secretOrKey: appConfig.jwtSecret,
+      secretOrKey: appConfig.jwtRefreshSecret,
       usernameField: 'email',
     });
   }

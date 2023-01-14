@@ -3,19 +3,24 @@ import {
   Controller,
   Get,
   Post,
-  Headers,
   UseGuards,
+  Res,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { FastifyReply } from 'fastify';
 
 import { AuthService } from '@server/modules/auth/auth.service';
 import { AuthGuard } from '@server/common/guards/auth.guard';
+import { RefreshJWTGuard } from '@server/common/guards/refreshJWT.guard';
 import { User } from '@server/common/decorators/user.decorator';
+import { Cookies } from '@server/common/decorators/cookies.decorator';
+import { RefreshTokenCookieName } from '@server/modules/auth/strategies';
 
 import { Route } from '@shared/enums';
 import { LoginDto } from '@server/modules/auth/dto/auth.dto';
-import { AuthEntity } from '@server/modules/auth/entities/auth.entity';
 import { RequestUser } from '@shared/types/auth.types';
+import { SuccessEntity } from '@server/common/entities/common.entities';
 
 @Controller(Route.Auth)
 @ApiTags('Auth Controller')
@@ -23,25 +28,37 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @ApiOkResponse({ type: AuthEntity })
-  async createUser(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  @ApiOkResponse({ type: SuccessEntity })
+  async loginUser(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: FastifyReply
+  ) {
+    return this.authService.login(res, loginDto);
+  }
+
+  @Post('logout')
+  @HttpCode(200)
+  @ApiOkResponse({ type: SuccessEntity })
+  @UseGuards(AuthGuard)
+  logoutUser(@Res({ passthrough: true }) res: FastifyReply) {
+    return this.authService.logout(res);
   }
 
   @Get('/test')
-  @ApiOkResponse({ type: Boolean })
+  @ApiOkResponse({ type: SuccessEntity })
   @UseGuards(AuthGuard)
   async test() {
-    return true;
+    return { success: true };
   }
 
-  @Post('refresh')
-  @ApiOkResponse({ type: AuthEntity })
-  @UseGuards(AuthGuard)
+  @Get('refresh')
+  @ApiOkResponse({ type: SuccessEntity })
+  @UseGuards(RefreshJWTGuard)
   async refresh(
     @User() user: RequestUser,
-    @Headers('Authorization') token: string
+    @Cookies(RefreshTokenCookieName) token: string,
+    @Res({ passthrough: true }) res: FastifyReply
   ) {
-    return this.authService.refresh(user, token);
+    return this.authService.refresh(res, user, token);
   }
 }
