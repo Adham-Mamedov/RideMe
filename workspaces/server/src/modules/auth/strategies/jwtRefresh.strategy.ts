@@ -5,10 +5,8 @@ import { ConfigType } from '@nestjs/config';
 import { User } from '@prisma/client';
 
 import AppConfig from '@server/app.config';
-import {
-  cookieExtractor,
-  RefreshTokenCookieName,
-} from '@server/modules/auth/strategies/index';
+import { cookieExtractor } from '@server/modules/auth/strategies/index';
+import { ECookieNames } from '@shared/enums';
 import { RequestUser } from '@shared/types/auth.types';
 
 @Injectable()
@@ -21,7 +19,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     private readonly appConfig: ConfigType<typeof AppConfig>
   ) {
     super({
-      jwtFromRequest: cookieExtractor(RefreshTokenCookieName),
+      jwtFromRequest: cookieExtractor(ECookieNames.RefreshTokenCookieName),
       ignoreExpiration: false,
       secretOrKey: appConfig.jwtRefreshSecret,
       usernameField: 'email',

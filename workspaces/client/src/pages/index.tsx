@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { Box, Button, Heading, Text } from '@chakra-ui/react';
-import { useGlobalStore } from '../stores/GlobalStore';
+import { useGlobalStore } from '@client/stores/GlobalStore';
 
 const IndexPage: NextPage = () => {
   const loading = useGlobalStore((store) => store.loading);

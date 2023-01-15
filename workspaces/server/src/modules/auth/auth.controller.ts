@@ -15,24 +15,26 @@ import { AuthGuard } from '@server/common/guards/auth.guard';
 import { RefreshJWTGuard } from '@server/common/guards/refreshJWT.guard';
 import { User } from '@server/common/decorators/user.decorator';
 import { Cookies } from '@server/common/decorators/cookies.decorator';
-import { RefreshTokenCookieName } from '@server/modules/auth/strategies';
 
-import { Route } from '@shared/enums';
-import { LoginDto } from '@server/modules/auth/dto/auth.dto';
+import { ECookieNames, ERoute } from '@shared/enums';
 import { RequestUser } from '@shared/types/auth.types';
+import { LoginDto } from '@server/modules/auth/dto/auth.dto';
 import { SuccessEntity } from '@server/common/entities/common.entities';
 
-@Controller(Route.Auth)
+@Controller(ERoute.Auth)
 @ApiTags('Auth Controller')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @ApiOkResponse({ type: SuccessEntity })
+  @ApiOkResponse({
+    type: SuccessEntity,
+  })
+  @HttpCode(200)
   async loginUser(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: FastifyReply
-  ) {
+  ): Promise<SuccessEntity> {
     return this.authService.login(res, loginDto);
   }
 
@@ -47,7 +49,7 @@ export class AuthController {
   @Get('/test')
   @ApiOkResponse({ type: SuccessEntity })
   @UseGuards(AuthGuard)
-  async test() {
+  async test(): Promise<SuccessEntity> {
     return { success: true };
   }
 
@@ -56,7 +58,7 @@ export class AuthController {
   @UseGuards(RefreshJWTGuard)
   async refresh(
     @User() user: RequestUser,
-    @Cookies(RefreshTokenCookieName) token: string,
+    @Cookies(ECookieNames.RefreshTokenCookieName) token: string,
     @Res({ passthrough: true }) res: FastifyReply
   ) {
     return this.authService.refresh(res, user, token);

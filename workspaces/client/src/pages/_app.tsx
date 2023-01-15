@@ -1,23 +1,40 @@
 import type { AppProps } from 'next/app';
-import { ChakraProvider } from '@chakra-ui/react';
-
-import HTMLHead from '../components/shared/HTMLHead';
-
-import '../assets/styles/global.scss';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
+import { useState } from 'react';
 import {
   DehydratedState,
   Hydrate,
   QueryClient,
   QueryClientProvider,
 } from 'react-query';
-import { useState } from 'react';
+
+import AuthProvider from '@client/components/shared/AuthProvider';
+import Link from 'next/link';
+import HTMLHead from '@client/components/shared/HTMLHead';
+
+import '@client/assets/styles/global.scss';
+import { useAuthStore } from '@client/stores/AuthStore';
 
 interface NextAppProps extends AppProps<{ dehydratedState: DehydratedState }> {}
 
-const Page = (props: AppProps) => {
+const Page = (props: NextAppProps) => {
   const { Component, pageProps } = props;
+  const user = useAuthStore((state) => state.user);
 
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Link href={'/'}>Home</Link>
+      <Link href={'/login'}>Login</Link>
+      <Link href={'/test'}>Test</Link>
+      {user && (
+        <Flex gap={'1rem'}>
+          <p>Logged in as: {user.name}</p>
+          <b>Role: {user.role}</b>
+        </Flex>
+      )}
+      <Component {...pageProps} />
+    </>
+  );
 };
 
 const NextApp = (props: NextAppProps) => {
@@ -28,7 +45,9 @@ const NextApp = (props: NextAppProps) => {
       <Hydrate state={props.pageProps.dehydratedState}>
         <ChakraProvider>
           <HTMLHead />
-          <Page {...props} />
+          <AuthProvider>
+            <Page {...props} />
+          </AuthProvider>
         </ChakraProvider>
       </Hydrate>
     </QueryClientProvider>

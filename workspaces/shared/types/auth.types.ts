@@ -1,10 +1,11 @@
 import type { FastifyRequest } from 'fastify';
+import { Role } from '@prisma/client';
 
 export interface RequestUser {
-  email: string;
   id: number;
+  email: string;
   name: string;
-  role: string;
+  role: Role;
 }
 
 export interface RequestWithUser extends FastifyRequest {

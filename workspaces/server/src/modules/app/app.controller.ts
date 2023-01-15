@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AppService } from '@server/modules/app/app.service';
-import { Route } from '@shared/enums';
+import { ERoute } from '@shared/enums';
 
-@Controller(Route.App)
+@Controller(ERoute.App)
 @ApiTags('App Controller')
 export class AppController {
   constructor(private readonly appService: AppService) {}

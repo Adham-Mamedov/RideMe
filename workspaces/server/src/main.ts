@@ -11,7 +11,7 @@ import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
 import AppConfig from '@server/app.config';
 import { AppModule } from '@server/modules/app/app.module';
 
-import { Route } from '@shared/enums';
+import { ERoute } from '@shared/enums';
 
 (async () => {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -34,7 +34,7 @@ import { Route } from '@shared/enums';
 
   app
     .useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
-    .setGlobalPrefix(Route.Api)
+    .setGlobalPrefix(ERoute.Api)
     .useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter))
     .register(fastifyCookie, {
       secret: appSecret,
@@ -52,7 +52,7 @@ import { Route } from '@shared/enums';
       .setVersion('1.0')
       .build();
     const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup(Route.Swagger, app, document);
+    SwaggerModule.setup(ERoute.Swagger, app, document);
   }
 
   await app.listen(appPort, '::');

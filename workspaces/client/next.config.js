@@ -5,6 +5,7 @@ const appPort = parseInt(APP_PORT, 10) || 3001;
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  poweredByHeader: false,
   experimental: {
     externalDir: true,
   },

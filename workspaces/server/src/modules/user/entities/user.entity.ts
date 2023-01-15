@@ -1,17 +1,19 @@
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@shared/enums';
 
 export class UserEntity implements Partial<User> {
-  @ApiProperty()
-  id: number;
-
-  @ApiProperty()
+  @ApiProperty({ example: 'example@mail.com' })
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Foo Bar' })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'User' })
   role: Role;
+
+  constructor(email: string, name: string, role: Role) {
+    this.email = email;
+    this.name = name;
+    this.role = role;
+  }
 }

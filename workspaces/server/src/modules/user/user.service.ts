@@ -1,20 +1,21 @@
+import bcrypt from 'bcrypt';
 import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'nestjs-prisma';
-import bcrypt from 'bcrypt';
+import { User, Role } from '@prisma/client';
 
 import AppConfig from '@server/app.config';
 import { exclude, excludeFromArray } from '@shared/utils/object.utils';
 
-import { User } from '@prisma/client';
-import { ErrorCodes, Role } from '@shared/enums';
+import { EErrorMessages } from '@shared/enums';
 import { CreateUserDto } from '@server/modules/user/dto/user.dto';
 
 @Injectable()
@@ -34,6 +35,7 @@ export class UserService {
         'refreshToken',
       ]);
     } catch (error) {
+      Logger.error(error, 'UserService:getUsers');
       throw new NotFoundException();
     }
   }
@@ -46,17 +48,18 @@ export class UserService {
         },
       });
     } catch (error) {
-      throw new NotFoundException(ErrorCodes.UserNotFound);
+      Logger.error(error, 'UserService:getUserByEmail');
+      throw new NotFoundException(EErrorMessages.UserNotFound);
     }
   }
 
   async createUser(userDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(
-      userDto.password,
-      this.appConfig.bcryptRounds
-    );
-
     try {
+      const hashedPassword = await bcrypt.hash(
+        userDto.password,
+        this.appConfig.bcryptRounds
+      );
+
       const user = await this.prisma.user.create({
         data: {
           ...userDto,
@@ -68,8 +71,9 @@ export class UserService {
         'password',
         'refreshToken',
       ]);
-    } catch {
-      throw new BadRequestException(ErrorCodes.UserAlreadyExists);
+    } catch (error) {
+      Logger.warn(error, 'UserService:createUser');
+      throw new BadRequestException(EErrorMessages.UserAlreadyExists);
     }
   }
 
@@ -92,7 +96,9 @@ export class UserService {
       });
       return true;
     } catch {
-      throw new InternalServerErrorException(ErrorCodes.FailedToRefreshToken);
+      throw new InternalServerErrorException(
+        EErrorMessages.FailedToRefreshToken
+      );
     }
   }
 
@@ -100,8 +106,11 @@ export class UserService {
     try {
       await this.prisma.user.deleteMany();
       return true;
-    } catch {
-      throw new InternalServerErrorException(ErrorCodes.InternalServerError);
+    } catch (error) {
+      Logger.error(error, 'UserService:dropUsers');
+      throw new InternalServerErrorException(
+        EErrorMessages.InternalServerError
+      );
     }
   }
 }

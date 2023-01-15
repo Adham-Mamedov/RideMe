@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 interface IGlobalStore {
   loading: boolean;
@@ -6,6 +6,6 @@ interface IGlobalStore {
 }
 
 export const useGlobalStore = create<IGlobalStore>()((set) => ({
-  loading: true,
+  loading: false,
   setLoading: (loading: boolean) => set(() => ({ loading })),
 }));
