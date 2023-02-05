@@ -2,7 +2,7 @@ import type { FastifyRequest } from 'fastify';
 import { Role } from '@prisma/client';
 
 export interface RequestUser {
-  id: number;
+  id: string;
   email: string;
   name: string;
   role: Role;
