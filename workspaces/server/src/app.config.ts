@@ -9,6 +9,7 @@ export default registerAs('appConfig', () => {
     BCRYPT_ROUNDS,
     JWT_SECRET,
     JWT_REFRESH_SECRET,
+    DEFAULT_OWNER_EMAIL,
   } = process.env;
   const appPort = parseInt(APP_PORT, 10) || 3001;
 
@@ -20,5 +21,6 @@ export default registerAs('appConfig', () => {
     bcryptRounds: parseInt(BCRYPT_ROUNDS, 10) || 10,
     jwtSecret: JWT_SECRET,
     jwtRefreshSecret: JWT_REFRESH_SECRET,
+    defaultOwnerEmail: DEFAULT_OWNER_EMAIL,
   };
 });

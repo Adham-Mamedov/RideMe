@@ -6,6 +6,7 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -19,7 +20,7 @@ import { EErrorMessages } from '@shared/enums';
 import { CreateUserDto } from '@server/modules/user/dto/user.dto';
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -53,7 +54,7 @@ export class UserService {
     }
   }
 
-  async createUser(userDto: CreateUserDto) {
+  async createUser(userDto: CreateUserDto, role: Role = Role.User) {
     try {
       const hashedPassword = await bcrypt.hash(
         userDto.password,
@@ -64,7 +65,7 @@ export class UserService {
         data: {
           ...userDto,
           password: hashedPassword,
-          role: Role.User,
+          role,
         },
       });
       return exclude<User, 'password' | 'refreshToken'>(user, [
@@ -110,6 +111,20 @@ export class UserService {
       Logger.error(error, 'UserService:dropUsers');
       throw new InternalServerErrorException(
         EErrorMessages.InternalServerError
+      );
+    }
+  }
+
+  async onModuleInit() {
+    const users = await this.prisma.user.findMany();
+    if (!users.length) {
+      await this.createUser(
+        {
+          email: this.appConfig.defaultOwnerEmail,
+          name: 'Adham Mamedov',
+          password: '123456',
+        },
+        Role.Owner
       );
     }
   }
