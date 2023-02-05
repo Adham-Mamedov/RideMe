@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { Box, Button, Heading } from '@chakra-ui/react';
+import { Button, Flex, Heading } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 
@@ -35,15 +35,28 @@ const TestPage: NextPage = () => {
     }
   );
 
-  if (user?.role !== Role.Admin) {
+  if (!user || user.role === Role.User) {
     return <div>Loading</div>;
   }
 
   return (
-    <Box p={6}>
-      <Heading>Test Page</Heading>
-      <Button onClick={() => logout()}>Log out</Button>
-    </Box>
+    <Flex flexDir={'column'} gap={'1rem'} p={6}>
+      <Heading>
+        Test Page{' '}
+        <Button w={'fit-content'} onClick={() => logout()}>
+          Log out
+        </Button>
+      </Heading>
+
+      <Heading size={'md'}>Users:</Heading>
+      <ol>
+        {data?.data?.map((user: any) => (
+          <li key={user.id}>
+            {user.name} - {user.email}
+          </li>
+        ))}
+      </ol>
+    </Flex>
   );
 };
 

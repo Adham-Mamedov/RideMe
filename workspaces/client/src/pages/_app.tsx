@@ -23,9 +23,11 @@ const Page = (props: NextAppProps) => {
 
   return (
     <>
-      <Link href={'/'}>Home</Link>
-      <Link href={'/login'}>Login</Link>
-      <Link href={'/test'}>Test</Link>
+      <Flex gap={'1rem'} px={'1.5rem'} fontSize={'1.3rem'}>
+        <Link href={'/'}>Home</Link>
+        <Link href={'/login'}>Login</Link>
+        <Link href={'/test'}>Test</Link>
+      </Flex>
       {user && (
         <Flex gap={'1rem'}>
           <p>Logged in as: {user.name}</p>
