@@ -1,6 +1,7 @@
 import type { ClassConstructor } from 'class-transformer';
 import { plainToInstance } from 'class-transformer';
 import {
+  IsEmail,
   IsEnum,
   IsNumberString,
   IsString,
@@ -23,6 +24,7 @@ class EnvVars {
   @IsNumberString() BCRYPT_ROUNDS: string;
   @IsString() JWT_SECRET: string;
   @IsString() JWT_REFRESH_SECRET: string;
+  @IsEmail() DEFAULT_OWNER_EMAIL: string;
 }
 
 export const validateObject = <T>(type: ClassConstructor<T>, obj = {}) => {

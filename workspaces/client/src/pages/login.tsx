@@ -14,6 +14,8 @@ import { useGlobalStore } from '@client/stores/GlobalStore';
 import { useAxios } from '@client/hooks/useAxios';
 
 import { SuccessEntity } from '@server/common/entities/common.entities';
+import { useQuery } from 'react-query';
+import { EReactQueryKeys, ERoute } from '@shared/enums';
 
 const LoginPage: NextPage = () => {
   const loading = useGlobalStore((store) => store.loading);
@@ -33,6 +35,20 @@ const LoginPage: NextPage = () => {
       [key]: event.target.value,
     }));
   }, []);
+
+  const { refetch: logout } = useQuery(
+    EReactQueryKeys.logout,
+    () => axios.post(`${ERoute.Auth}/logout`),
+    {
+      enabled: false,
+      onError(error) {
+        console.log(error);
+      },
+      onSuccess() {
+        router.push('/');
+      },
+    }
+  );
 
   const submitHandler = useCallback(
     async (e: any) => {
@@ -71,6 +87,9 @@ const LoginPage: NextPage = () => {
         </FormControl>
         <Button type={'submit'} disabled={loading}>
           Log in
+        </Button>
+        <Button w={'fit-content'} onClick={() => logout()}>
+          Log out
         </Button>
       </form>
     </Box>
