@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
-import { ChakraProvider, Flex } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useState } from 'react';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 import {
   DehydratedState,
   Hydrate,
@@ -9,11 +10,12 @@ import {
 } from 'react-query';
 
 import AuthProvider from '@client/components/shared/AuthProvider';
-import Link from 'next/link';
 import HTMLHead from '@client/components/shared/HTMLHead';
 
-import '@client/assets/styles/global.scss';
+import { customTheme } from '@client/utils/chakra-theme';
 import { useAuthStore } from '@client/stores/AuthStore';
+
+import '@client/assets/styles/global.scss';
 
 interface NextAppProps extends AppProps<{ dehydratedState: DehydratedState }> {}
 
@@ -45,7 +47,7 @@ const NextApp = (props: NextAppProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <Hydrate state={props.pageProps.dehydratedState}>
-        <ChakraProvider>
+        <ChakraProvider theme={customTheme}>
           <HTMLHead />
           <AuthProvider>
             <Page {...props} />
