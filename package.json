@@ -1,9 +1,9 @@
 {
-  "name": "next-nest-boilerplate",
+  "name": "rideme",
   "version": "1.0.0",
-  "description": "Next.js + Nest.js boilerplate",
+  "description": "Service for shared bicycles",
   "private": true,
-  "repository": "https://github.com/Adham-Mamedov/next-nest-boilerplate.git",
+  "repository": "https://github.com/Adham-Mamedov/RideMe.git",
   "author": "Adham-Mamedov <adhammamedov@mail.ru>",
   "license": "MIT",
   "scripts": {
