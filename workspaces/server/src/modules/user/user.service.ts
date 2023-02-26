@@ -11,13 +11,18 @@ import {
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'nestjs-prisma';
-import { User, Role } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 
 import AppConfig from '@server/app.config';
 import { exclude, excludeFromArray } from '@shared/utils/object.utils';
 
 import { EErrorMessages } from '@shared/enums';
 import { CreateUserDto } from '@server/modules/user/dto/user.dto';
+
+const defaultCard = {
+  number: '1111222233334444',
+  expDate: '12/24',
+};
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -28,7 +33,7 @@ export class UserService implements OnModuleInit {
     private readonly appConfig: ConfigType<typeof AppConfig>
   ) {}
 
-  async getUsers() {
+  async getUsers(): Promise<User[]> {
     try {
       const users = await this.prisma.user.findMany();
       return excludeFromArray<User, 'password' | 'refreshToken'>(users, [
@@ -41,7 +46,7 @@ export class UserService implements OnModuleInit {
     }
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<User | null> {
     try {
       return this.prisma.user.findUnique({
         where: {
@@ -61,11 +66,20 @@ export class UserService implements OnModuleInit {
         this.appConfig.bcryptRounds
       );
 
+      const encryptedCardNumber = this.jwtService.sign(userDto.card.number, {
+        secret: this.appConfig.jwtSecret,
+      });
+      const card = {
+        number: encryptedCardNumber,
+        expDate: userDto.card.expDate,
+      };
+
       const user = await this.prisma.user.create({
         data: {
           ...userDto,
           password: hashedPassword,
           role,
+          card,
         },
       });
       return exclude<User, 'password' | 'refreshToken'>(user, [
@@ -82,6 +96,11 @@ export class UserService implements OnModuleInit {
     const hashedToken = this.jwtService.sign(token, {
       secret: this.appConfig.jwtRefreshSecret,
     });
+
+    dbUser.card.number = this.jwtService.sign(dbUser.card.number, {
+      secret: this.appConfig.jwtSecret,
+    });
+
     const id = dbUser.id;
     delete dbUser.id;
 
@@ -123,6 +142,7 @@ export class UserService implements OnModuleInit {
           email: this.appConfig.defaultOwnerEmail,
           name: 'Adham Mamedov',
           password: '123456',
+          card: defaultCard,
         },
         Role.Owner
       );

@@ -14,6 +14,7 @@ import { FastifyReply } from 'fastify';
 import AppConfig from '@server/app.config';
 import { UserService } from '@server/modules/user/user.service';
 import { exclude } from '@shared/utils/object.utils';
+import { hideCardNumber } from '@shared/utils/string.utils';
 import { ExpirationTime } from '@server/modules/auth/strategies';
 
 import { ECookieNames, EErrorMessages } from '@shared/enums';
@@ -91,6 +92,9 @@ export class AuthService {
     }
     delete user.refreshToken;
 
+    const decodedCardNumber = this.jwtService.decode(user.card.number);
+    user.card.number = decodedCardNumber as string;
+
     const accessToken = this.jwtService.sign(user, {
       secret: this.appConfig.jwtSecret,
       expiresIn: ExpirationTime.accessToken,
@@ -104,6 +108,10 @@ export class AuthService {
       name: reqUser.name,
       role: reqUser.role,
       email: reqUser.email,
+      card: {
+        number: hideCardNumber(user.card.number),
+        expDate: user.card.expDate,
+      },
     };
 
     await this.userService.updateUserToken(user, refreshToken);

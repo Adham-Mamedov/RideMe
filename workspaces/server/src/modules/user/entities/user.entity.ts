@@ -1,19 +1,33 @@
-import { Role, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UserEntity implements Partial<User> {
   @ApiProperty({ example: 'example@mail.com' })
-  email: string;
+  email: User['email'];
 
   @ApiProperty({ example: 'Foo Bar' })
-  name: string;
+  name: User['name'];
 
   @ApiProperty({ example: 'User' })
-  role: Role;
+  role: User['role'];
 
-  constructor(email: string, name: string, role: Role) {
+  @ApiProperty({
+    example: {
+      number: '1234 5678 9012 3456',
+      expDate: '12/24',
+    },
+  })
+  card: User['card'];
+
+  constructor(
+    email: User['email'],
+    name: User['name'],
+    role: User['role'],
+    card: User['card']
+  ) {
     this.email = email;
     this.name = name;
     this.role = role;
+    this.card = card;
   }
 }

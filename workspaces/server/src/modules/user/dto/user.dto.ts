@@ -1,16 +1,26 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsObject, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'example@mail.com' })
   @IsEmail()
-  email: string;
+  email: User['email'];
 
   @ApiProperty({ example: 'password' })
   @IsString()
-  password: string;
+  password: User['password'];
 
   @ApiProperty({ example: 'Foo Bar' })
   @IsString()
-  name: string;
+  name: User['name'];
+
+  @ApiProperty({
+    example: {
+      number: '1234 5678 9012 3456',
+      expDate: '12/24',
+    },
+  })
+  @IsObject()
+  card: User['card'];
 }

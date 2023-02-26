@@ -10,12 +10,18 @@ datasource db {
 model User {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   email        String  @unique
-  password     String  @default("NULL")
+  password     String  @default("NULL") // Hashed
   name         String  @default("NULL")
   role         Role    @default(User)
   refreshToken String?
+  card         Card
 
   @@map("users")
+}
+
+type Card {
+  number  String // Encrypted
+  expDate String
 }
 
 enum Role {
