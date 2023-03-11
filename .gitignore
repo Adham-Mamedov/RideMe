@@ -154,8 +154,6 @@ dist
 */**/prisma/schema.prisma
 */**/prisma/migrations
 
-# Next.js CDN public files
-public/
 
 # OS
 .DS_Store

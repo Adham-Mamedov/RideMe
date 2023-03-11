@@ -7,7 +7,7 @@ export interface IRide {
   stationFromId: IStation['id'];
   stationToId: IStation['id'];
   timeStart: Date;
-  timeEnd: Date;
+  timeEnd: Date | null;
   cost: number;
   distance: number;
 }

@@ -1,20 +1,19 @@
 import { NextPage } from 'next';
-import { Box, Button, Heading, Text } from '@chakra-ui/react';
-import { useGlobalStore } from '@client/stores/GlobalStore';
+import ClientPrimaryLayout from '@client/components/shared/layouts/ClientPrimary';
+import Motivation from '@client/components/homePage/Motivation/Motivation';
+import AboutUs from '@client/components/homePage/AboutUs';
+import Testimonials from '@client/components/homePage/Testimonial/Testimonials';
+import Footer from '@client/components/shared/Footer/Footer';
 
-const IndexPage: NextPage = () => {
-  const loading = useGlobalStore((store) => store.loading);
-  const setLoading = useGlobalStore((store) => store.setLoading);
-
+const HomePage: NextPage = () => {
   return (
-    <Box p={6}>
-      <Heading>Hello world!</Heading>
-      <Text>{loading ? 'loading' : 'Not Loading.'}</Text>
-      <Button variant={'primary'} onClick={() => setLoading(!loading)}>
-        Switch Loading
-      </Button>
-    </Box>
+    <ClientPrimaryLayout>
+      <Motivation />
+      <AboutUs />
+      <Testimonials />
+      <Footer />
+    </ClientPrimaryLayout>
   );
 };
 
-export default IndexPage;
+export default HomePage;
