@@ -2,10 +2,10 @@ import { IUser } from '@shared/types/auth.types';
 
 export interface IRide {
   id: string;
-  userId: IUser['id'];
-  bikeId: IBike['id'];
+  userId?: IUser['id'];
+  bikeId?: IBike['id'];
   stationFromId: IStation['id'];
-  stationToId: IStation['id'];
+  stationToId: IStation['id'] | null;
   timeStart: Date;
   timeEnd: Date | null;
   cost: number;
@@ -31,4 +31,11 @@ export interface IStation {
   title: string;
   location: [number, number];
   bikes: IBike['id'][];
+}
+
+export interface IComment {
+  id?: string;
+  rideId: IRide['id'];
+  text: string;
+  createdAt: Date;
 }

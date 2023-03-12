@@ -5,7 +5,9 @@ interface IGlobalStore {
   loading: boolean;
   setLoading: (loading: boolean) => void;
   activeRide: IRide | null;
-  setActiveRide: (activeRide: any) => void;
+  setActiveRide: (activeRide: IRide | null) => void;
+  showPostRideModal: boolean;
+  setShowPostRideModal: (showRideModal: boolean) => void;
 }
 
 export const useGlobalStore = create<IGlobalStore>()((set) => ({
@@ -16,11 +18,14 @@ export const useGlobalStore = create<IGlobalStore>()((set) => ({
     userId: '1',
     bikeId: '1',
     stationFromId: '1',
-    stationToId: '1',
-    timeStart: new Date(),
+    stationToId: null,
+    timeStart: new Date(1678606460002),
     timeEnd: null,
     cost: 0,
     distance: 0,
   },
   setActiveRide: (activeRide: any) => set(() => ({ activeRide })),
+  showPostRideModal: false,
+  setShowPostRideModal: (showPostRideModal: boolean) =>
+    set(() => ({ showPostRideModal })),
 }));

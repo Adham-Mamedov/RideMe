@@ -21,6 +21,7 @@ import {
   unauthenticatedLinks,
 } from '@client/utils/defaults';
 import { INavLink } from '@shared/types/client.types';
+import PostRideModal from '@client/components/shared/Navbar/PostRideModal';
 
 interface IProps {}
 
@@ -55,7 +56,7 @@ const NavBar: FC<IProps> = ({}) => {
             spacing={['0.5rem', '1rem', '30px']}
             justify={['space-around', 'auto']}
           >
-            {activeRide && (
+            {activeRide && !activeRide.timeEnd && (
               <WrapItem>
                 <RideTimer />
               </WrapItem>
@@ -77,6 +78,7 @@ const NavBar: FC<IProps> = ({}) => {
           </Wrap>
         </Box>
       </Container>
+      <PostRideModal />
     </Card>
   );
 };

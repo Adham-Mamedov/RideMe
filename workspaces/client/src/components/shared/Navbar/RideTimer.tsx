@@ -8,11 +8,16 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 import { useGlobalStore } from '@client/stores/GlobalStore';
+import { IRide } from '@shared/types/assets.types';
 
 interface IProps {}
 
 const RideTimer: FC<IProps> = () => {
+  const setShowPostRideModal = useGlobalStore(
+    (state) => state.setShowPostRideModal
+  );
   const activeRide = useGlobalStore((state) => state.activeRide);
+  const setActiveRide = useGlobalStore((state) => state.setActiveRide);
   const [stopwatchTime, setStopwatchTime] = useState<string>('00:00:00');
 
   const getStopwatchTime = useCallback(() => {
@@ -24,7 +29,8 @@ const RideTimer: FC<IProps> = () => {
     const diff = now - timeStart.getTime();
 
     if (diff > maxRideTime) {
-      // TODO: stop ride
+      // TODO: finish ride
+      setShowPostRideModal(true);
       return '00:00:00';
     }
 
@@ -35,15 +41,34 @@ const RideTimer: FC<IProps> = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }, [activeRide]);
+  }, [activeRide, setShowPostRideModal]);
 
   const finishRide = useCallback(() => {
     // TODO: finish ride
-    console.log(activeRide);
-  }, [activeRide]);
+    const rideCost = (() => {
+      const now = new Date().getTime();
+      const difference = now - activeRide?.timeStart?.getTime()!;
+      const minutes = Math.ceil(difference / 1000 / 60); // TODO: subtract free minutes;
+      return minutes * 1000;
+    })();
+
+    const ride: IRide = {
+      ...activeRide!,
+      timeEnd: new Date(),
+      stationToId: '2',
+      distance: Math.random() * 5,
+      cost: rideCost,
+    };
+    setActiveRide(ride);
+    setShowPostRideModal(true);
+  }, [activeRide, setActiveRide, setShowPostRideModal]);
 
   useEffect(() => {
-    const interval = setInterval(() => setStopwatchTime(getStopwatchTime()));
+    setStopwatchTime(getStopwatchTime());
+    const interval = setInterval(
+      () => setStopwatchTime(getStopwatchTime()),
+      1000
+    );
 
     return () => clearInterval(interval);
   }, [getStopwatchTime]);
