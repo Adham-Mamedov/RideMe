@@ -40,9 +40,9 @@ const PostRideModal: FC<IProps> = ({}) => {
   }, [activeRide]);
 
   const rideCost = useMemo<string>(() => {
-    return Intl.NumberFormat('ru-RU', {
+    return Intl.NumberFormat('uz-UZ', {
       style: 'currency',
-      currency: 'sum',
+      currency: 'UZS',
       maximumFractionDigits: 0,
     }).format(activeRide?.cost!);
   }, [activeRide]);
