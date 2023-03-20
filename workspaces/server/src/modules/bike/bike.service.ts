@@ -13,14 +13,18 @@ import {
   EditBikeDto,
 } from '@server/modules/bike/dto/bike.dto';
 import { EErrorMessages } from '@shared/enums';
+import { StationService } from '@server/modules/station/station.service';
 
 @Injectable()
 export class BikeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly stationService: StationService
+  ) {}
 
   async getAll(): Promise<Bike[]> {
     try {
-      return await this.prisma.bike.findMany();
+      return this.prisma.bike.findMany();
     } catch (error) {
       Logger.error(error, 'BikeService:getAll');
       throw new NotFoundException();
@@ -42,9 +46,19 @@ export class BikeService {
 
   async create(bike: CreateBikeDto): Promise<Bike> {
     try {
-      return this.prisma.bike.create({
+      const dbBike = await this.prisma.bike.create({
         data: bike,
       });
+
+      if (bike.stationId) {
+        const station = await this.stationService.getById(bike.stationId);
+        await this.stationService.edit({
+          ...station,
+          bikes: [...station.bikes, dbBike.id],
+        });
+      }
+
+      return dbBike;
     } catch (error) {
       Logger.error(error, 'BikeService:createStation');
       throw new InternalServerErrorException(EErrorMessages.CreateBikeFailed);
@@ -56,12 +70,34 @@ export class BikeService {
       const id = bike.id;
       delete bike.id;
 
-      return this.prisma.bike.update({
+      const dbBike = await this.prisma.bike.update({
         where: {
           id,
         },
         data: bike,
       });
+
+      if (!bike.stationId && !dbBike.stationId) return dbBike;
+
+      if (bike.stationId !== dbBike.stationId) {
+        if (bike.stationId) {
+          const oldStation = await this.stationService.getById(
+            dbBike.stationId
+          );
+          await this.stationService.edit({
+            ...oldStation,
+            bikes: oldStation.bikes.filter((b) => b !== dbBike.id),
+          });
+        }
+
+        const newStation = await this.stationService.getById(bike.stationId);
+        await this.stationService.edit({
+          ...newStation,
+          bikes: [...newStation.bikes, dbBike.id],
+        });
+      }
+
+      return dbBike;
     } catch (error) {
       Logger.error(error, 'BikeService:editStation');
       throw new InternalServerErrorException(EErrorMessages.EditBikeFailed);
@@ -70,11 +106,20 @@ export class BikeService {
 
   async delete({ id }: DeleteBikeDto): Promise<boolean> {
     try {
-      await this.prisma.bike.delete({
+      const dbBike = await this.prisma.bike.delete({
         where: {
           id,
         },
       });
+
+      if (dbBike.stationId) {
+        const station = await this.stationService.getById(dbBike.stationId);
+        await this.stationService.edit({
+          ...station,
+          bikes: station.bikes.filter((b) => b !== dbBike.id),
+        });
+      }
+
       return true;
     } catch (error) {
       Logger.error(error, 'BikeService:deleteStation');

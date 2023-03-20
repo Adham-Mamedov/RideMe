@@ -1,7 +1,7 @@
 import { Bike, Station } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BikeEntity implements Partial<Station> {
+export class BikeEntity implements Partial<Bike> {
   @ApiProperty({ example: 'id' })
   id: Bike['id'];
 

@@ -44,21 +44,21 @@ export class BikeController {
   @Post('create')
   @ApiCreatedResponse({ type: BikeEntity })
   @UseGuards(RoleGuard(Role.Admin))
-  async createStation(@Body() stationDto: CreateBikeDto) {
-    return this.bikeService.create(stationDto);
+  async createStation(@Body() dto: CreateBikeDto) {
+    return this.bikeService.create(dto);
   }
 
   @Put('edit')
   @ApiCreatedResponse({ type: BikeEntity })
   @UseGuards(RoleGuard(Role.Admin))
-  async editStation(@Body() stationDto: EditBikeDto) {
-    return this.bikeService.edit(stationDto);
+  async editStation(@Body() dto: EditBikeDto) {
+    return this.bikeService.edit(dto);
   }
 
   @Delete('delete')
   @ApiOkResponse({ type: Boolean })
   @UseGuards(RoleGuard(Role.Admin))
-  async deleteStation(@Body() stationDto: DeleteBikeDto) {
-    return this.bikeService.delete(stationDto);
+  async deleteStation(@Body() dto: DeleteBikeDto) {
+    return this.bikeService.delete(dto);
   }
 }
