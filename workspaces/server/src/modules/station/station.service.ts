@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { Station } from '@prisma/client';
 
@@ -14,7 +19,7 @@ import { IStation } from '@shared/types/assets.types';
 export class StationService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<Station[]> {
+  async getAll(): Promise<IStation[]> {
     try {
       const dbStations = await this.prisma.station.findMany();
       return dbStations.map((station) => this.deserializeStation(station));
@@ -35,7 +40,7 @@ export class StationService {
       return this.deserializeStation(dbStation);
     } catch (error) {
       Logger.error(error, 'StationService:getById');
-      throw new NotFoundException(EErrorMessages.UserNotFound);
+      throw new NotFoundException(EErrorMessages.StationNotFound);
     }
   }
 
@@ -53,7 +58,9 @@ export class StationService {
       return this.deserializeStation(createdStation);
     } catch (error) {
       Logger.error(error, 'StationService:createStation');
-      throw new NotFoundException();
+      throw new InternalServerErrorException(
+        EErrorMessages.CreateStationFailed
+      );
     }
   }
 
@@ -76,7 +83,7 @@ export class StationService {
       return this.deserializeStation(dbStation);
     } catch (error) {
       Logger.error(error, 'StationService:editStation');
-      throw new NotFoundException();
+      throw new InternalServerErrorException(EErrorMessages.EditStationFailed);
     }
   }
 
@@ -90,7 +97,9 @@ export class StationService {
       return true;
     } catch (error) {
       Logger.error(error, 'StationService:deleteStation');
-      throw new NotFoundException();
+      throw new InternalServerErrorException(
+        EErrorMessages.DeleteStationFailed
+      );
     }
   }
 

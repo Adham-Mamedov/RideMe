@@ -1,10 +1,17 @@
-import { IsArray, ArrayMinSize, ArrayMaxSize, IsString } from 'class-validator';
+import {
+  IsArray,
+  ArrayMinSize,
+  ArrayMaxSize,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Station } from '@prisma/client';
 
 export class CreateStationDto {
   @ApiProperty({ example: 'Station Title' })
   @IsString()
+  @MaxLength(300)
   title: Station['title'];
 
   @ApiProperty({ example: [120, 130] })
@@ -21,10 +28,11 @@ export class CreateStationDto {
 export class EditStationDto {
   @ApiProperty({ example: 'stationId' })
   @IsString()
-  id: string;
+  id: Station['id'];
 
   @ApiProperty({ example: 'Station Title' })
   @IsString()
+  @MaxLength(300)
   title: Station['title'];
 
   @ApiProperty({ example: [120, 130] })
@@ -41,5 +49,5 @@ export class EditStationDto {
 export class DeleteStationDto {
   @ApiProperty({ example: 'stationId' })
   @IsString()
-  id: string;
+  id: Station['id'];
 }
