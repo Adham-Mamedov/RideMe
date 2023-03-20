@@ -7,17 +7,22 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 import { Station } from '@prisma/client';
 
-import { EErrorMessages } from '@shared/enums';
+import { BikeService } from '@server/modules/bike/bike.service';
+
 import {
   CreateStationDto,
   DeleteStationDto,
   EditStationDto,
 } from '@server/modules/station/dto/station.dto';
 import { IStation } from '@shared/types/assets.types';
+import { EErrorMessages } from '@shared/enums';
 
 @Injectable()
 export class StationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly bikeService: BikeService
+  ) {}
 
   async getAll(): Promise<IStation[]> {
     try {
@@ -55,6 +60,19 @@ export class StationService {
         data: serializedStation,
       });
 
+      const promises = station.bikes.map((bikeId) => {
+        return (async () => {
+          const bike = await this.bikeService.getById(bikeId);
+
+          await this.bikeService.edit({
+            ...bike,
+            stationId: createdStation.id,
+          });
+        })();
+      });
+
+      await Promise.all(promises);
+
       return this.deserialize(createdStation);
     } catch (error) {
       Logger.error(error, 'StationService:createStation');
@@ -64,23 +82,62 @@ export class StationService {
     }
   }
 
-  async edit(station: EditStationDto): Promise<IStation> {
+  async edit(stationDto: EditStationDto): Promise<IStation> {
     try {
       const serializedStation = {
-        ...station,
-        bikes: JSON.stringify(station.bikes),
-        location: JSON.stringify(station.location),
+        ...stationDto,
+        bikes: JSON.stringify(stationDto.bikes),
+        location: JSON.stringify(stationDto.location),
       };
+      const id = serializedStation.id;
       delete serializedStation.id;
+      const dbStation = await this.getById(id);
 
-      const dbStation = await this.prisma.station.update({
+      const dbUpdatedStation = await this.prisma.station.update({
         where: {
-          id: station.id,
+          id,
         },
         data: serializedStation,
       });
 
-      return this.deserialize(dbStation);
+      const oldBikes = JSON.parse(dbStation.bikes.toString());
+      const newBikes = stationDto.bikes;
+
+      const promises = newBikes
+        .map((bikeId) => {
+          const isWithinOldBikes = oldBikes.includes(bikeId);
+          if (isWithinOldBikes) return;
+
+          return (async () => {
+            const bike = await this.bikeService.getById(bikeId);
+
+            await this.bikeService.edit({
+              ...bike,
+              stationId: dbUpdatedStation.id,
+            });
+          })();
+        })
+        .filter(Boolean);
+
+      oldBikes.forEach((bikeId) => {
+        const isWithinNewBikes = newBikes.includes(bikeId);
+        if (isWithinNewBikes) return;
+
+        promises.push(
+          (async () => {
+            const bike = await this.bikeService.getById(bikeId);
+
+            await this.bikeService.edit({
+              ...bike,
+              stationId: null,
+            });
+          })()
+        );
+      });
+
+      await Promise.all(promises);
+
+      return this.deserialize(dbUpdatedStation);
     } catch (error) {
       Logger.error(error, 'StationService:editStation');
       throw new InternalServerErrorException(EErrorMessages.EditStationFailed);
@@ -89,11 +146,26 @@ export class StationService {
 
   async delete({ id }: DeleteStationDto): Promise<boolean> {
     try {
-      await this.prisma.station.delete({
+      const dbStation = await this.prisma.station.delete({
         where: {
           id,
         },
       });
+      const bikes = JSON.parse(dbStation.bikes.toString());
+
+      const promises = bikes.map((bikeId) => {
+        return (async () => {
+          const bike = await this.bikeService.getById(bikeId);
+
+          await this.bikeService.edit({
+            ...bike,
+            stationId: null,
+          });
+        })();
+      });
+
+      await Promise.all(promises);
+
       return true;
     } catch (error) {
       Logger.error(error, 'StationService:deleteStation');

@@ -7,13 +7,14 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 import { Bike } from '@prisma/client';
 
+import { StationService } from '@server/modules/station/station.service';
+
 import {
   CreateBikeDto,
   DeleteBikeDto,
   EditBikeDto,
 } from '@server/modules/bike/dto/bike.dto';
 import { EErrorMessages } from '@shared/enums';
-import { StationService } from '@server/modules/station/station.service';
 
 @Injectable()
 export class BikeService {
