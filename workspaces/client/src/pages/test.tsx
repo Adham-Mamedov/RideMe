@@ -27,7 +27,7 @@ const TestPage: NextPage = () => {
   );
   const { data } = useQuery(
     EReactQueryKeys.users,
-    () => axios.get(ERoute.User),
+    () => axios.get(ERoute.Users),
     {
       onError(error) {
         console.log(error);

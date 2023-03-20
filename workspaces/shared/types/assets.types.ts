@@ -34,7 +34,7 @@ export interface IStation {
 }
 
 export interface IComment {
-  id?: string;
+  id: string;
   rideId: IRide['id'];
   text: string;
   createdAt: Date;

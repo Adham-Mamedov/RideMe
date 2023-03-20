@@ -9,7 +9,7 @@ import { ERoute } from '@shared/enums';
 import { CreateUserDto } from '@server/modules/user/dto/user.dto';
 import { UserEntity } from '@server/modules/user/entities/user.entity';
 
-@Controller(ERoute.User)
+@Controller(ERoute.Users)
 @ApiTags('User Controller')
 export class UserController {
   constructor(private readonly userService: UserService) {}

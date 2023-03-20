@@ -3,7 +3,8 @@ export enum ERoute {
   Auth = '/auth',
   Swagger = 'api/swagger',
   App = '/app',
-  User = '/users',
+  Users = '/users',
+  Stations = '/stations',
 }
 
 export enum Role {

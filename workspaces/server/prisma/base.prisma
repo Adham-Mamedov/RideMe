@@ -29,3 +29,51 @@ enum Role {
   User
   Owner
 }
+
+model Station {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  title    String @unique
+  location Json // [lat, long]
+  bikes    Json // [bikeID]
+
+  @@map("stations")
+}
+
+model Bike {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  stationId         String  @map("stationId") @db.ObjectId
+  isAvailable       Boolean @default(true)
+  isBroken          Boolean @default(false)
+  title             String
+  description       String
+  imageUrl          String
+  wheelSize         Int
+  recommendedHeight Int
+  freeMinutes       Int
+  pricePerMinute    Int
+
+  @@map("bikes")
+}
+
+model Ride {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String    @map("userId") @db.ObjectId
+  bikeId        String?   @map("bikeId") @db.ObjectId
+  stationFromId String    @map("stationFromId") @db.ObjectId
+  stationToId   String?   @map("stationToId") @db.ObjectId
+  timeStart     DateTime  @default(now())
+  timeEnd       DateTime?
+  cost          Int       @default(0)
+  distance      Int       @default(0)
+
+  @@map("rides")
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  rideId    String   @map("rideId") @db.ObjectId
+  text      String
+  createdAt DateTime @default(now())
+
+  @@map("comments")
+}
