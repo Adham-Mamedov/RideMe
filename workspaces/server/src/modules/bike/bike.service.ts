@@ -65,39 +65,45 @@ export class BikeService {
     }
   }
 
-  async edit(bike: EditBikeDto): Promise<Bike> {
+  async edit(bikeDto: EditBikeDto): Promise<Bike> {
     try {
-      const id = bike.id;
-      delete bike.id;
+      const id = bikeDto.id;
+      delete bikeDto.id;
 
-      const dbBike = await this.prisma.bike.update({
+      const dbBike = await this.getById(id);
+
+      const dbUpdatedBike = await this.prisma.bike.update({
         where: {
           id,
         },
-        data: bike,
+        data: bikeDto,
       });
 
-      if (!bike.stationId && !dbBike.stationId) return dbBike;
+      if (!bikeDto.stationId && !dbBike.stationId) return dbUpdatedBike;
 
-      if (bike.stationId !== dbBike.stationId) {
-        if (bike.stationId) {
+      if (bikeDto.stationId !== dbBike.stationId) {
+        if (dbBike.stationId) {
           const oldStation = await this.stationService.getById(
             dbBike.stationId
           );
           await this.stationService.edit({
             ...oldStation,
-            bikes: oldStation.bikes.filter((b) => b !== dbBike.id),
+            bikes: oldStation.bikes.filter((b) => b !== dbUpdatedBike.id),
           });
         }
 
-        const newStation = await this.stationService.getById(bike.stationId);
-        await this.stationService.edit({
-          ...newStation,
-          bikes: [...newStation.bikes, dbBike.id],
-        });
+        if (bikeDto.stationId) {
+          const newStation = await this.stationService.getById(
+            bikeDto.stationId
+          );
+          await this.stationService.edit({
+            ...newStation,
+            bikes: [...newStation.bikes, dbUpdatedBike.id],
+          });
+        }
       }
 
-      return dbBike;
+      return dbUpdatedBike;
     } catch (error) {
       Logger.error(error, 'BikeService:editStation');
       throw new InternalServerErrorException(EErrorMessages.EditBikeFailed);
