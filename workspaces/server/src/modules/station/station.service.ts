@@ -22,7 +22,7 @@ export class StationService {
   async getAll(): Promise<IStation[]> {
     try {
       const dbStations = await this.prisma.station.findMany();
-      return dbStations.map((station) => this.deserializeStation(station));
+      return dbStations.map((station) => this.deserialize(station));
     } catch (error) {
       Logger.error(error, 'StationService:getAll');
       throw new NotFoundException();
@@ -37,14 +37,14 @@ export class StationService {
         },
       });
 
-      return this.deserializeStation(dbStation);
+      return this.deserialize(dbStation);
     } catch (error) {
       Logger.error(error, 'StationService:getById');
       throw new NotFoundException(EErrorMessages.StationNotFound);
     }
   }
 
-  async createStation(station: CreateStationDto): Promise<IStation> {
+  async create(station: CreateStationDto): Promise<IStation> {
     try {
       const serializedStation = {
         ...station,
@@ -55,7 +55,7 @@ export class StationService {
         data: serializedStation,
       });
 
-      return this.deserializeStation(createdStation);
+      return this.deserialize(createdStation);
     } catch (error) {
       Logger.error(error, 'StationService:createStation');
       throw new InternalServerErrorException(
@@ -64,7 +64,7 @@ export class StationService {
     }
   }
 
-  async editStation(station: EditStationDto): Promise<IStation> {
+  async edit(station: EditStationDto): Promise<IStation> {
     try {
       const serializedStation = {
         ...station,
@@ -80,14 +80,14 @@ export class StationService {
         data: serializedStation,
       });
 
-      return this.deserializeStation(dbStation);
+      return this.deserialize(dbStation);
     } catch (error) {
       Logger.error(error, 'StationService:editStation');
       throw new InternalServerErrorException(EErrorMessages.EditStationFailed);
     }
   }
 
-  async deleteStation({ id }: DeleteStationDto): Promise<boolean> {
+  async delete({ id }: DeleteStationDto): Promise<boolean> {
     try {
       await this.prisma.station.delete({
         where: {
@@ -103,7 +103,7 @@ export class StationService {
     }
   }
 
-  deserializeStation(station: Station): IStation {
+  deserialize(station: Station): IStation {
     return {
       ...station,
       location: JSON.parse(station.location.toString()),

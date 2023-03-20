@@ -9,6 +9,7 @@ import { StationModule } from '@server/modules/station/station.module';
 
 import AppConfig from '@server/app.config';
 import { validateEnv } from '@server/common/utils/validation.utils';
+import { BikeModule } from '@server/modules/bike/bike.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { validateEnv } from '@server/common/utils/validation.utils';
     PrismaModule,
     UserModule,
     StationModule,
+    BikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

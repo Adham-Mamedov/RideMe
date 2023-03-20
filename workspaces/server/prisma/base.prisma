@@ -41,10 +41,10 @@ model Station {
 
 model Bike {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
-  stationId         String  @map("stationId") @db.ObjectId
+  stationId         String? @map("stationId") @db.ObjectId
   isAvailable       Boolean @default(true)
   isBroken          Boolean @default(false)
-  title             String
+  title             String  @unique
   description       String
   imageUrl          String
   wheelSize         Int

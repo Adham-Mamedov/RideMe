@@ -45,20 +45,20 @@ export class StationController {
   @ApiCreatedResponse({ type: StationEntity })
   @UseGuards(RoleGuard(Role.Admin))
   async createStation(@Body() stationDto: CreateStationDto) {
-    return this.stationService.createStation(stationDto);
+    return this.stationService.create(stationDto);
   }
 
   @Put('edit')
   @ApiCreatedResponse({ type: StationEntity })
   @UseGuards(RoleGuard(Role.Admin))
   async editStation(@Body() stationDto: EditStationDto) {
-    return this.stationService.editStation(stationDto);
+    return this.stationService.edit(stationDto);
   }
 
   @Delete('delete')
   @ApiOkResponse({ type: Boolean })
   @UseGuards(RoleGuard(Role.Admin))
   async deleteStation(@Body() stationDto: DeleteStationDto) {
-    return this.stationService.deleteStation(stationDto);
+    return this.stationService.delete(stationDto);
   }
 }
