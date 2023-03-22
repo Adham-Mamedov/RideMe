@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -20,6 +22,7 @@ import { EErrorMessages } from '@shared/enums';
 export class BikeService {
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => StationService))
     private readonly stationService: StationService
   ) {}
 
@@ -53,9 +56,20 @@ export class BikeService {
 
       if (bike.stationId) {
         const station = await this.stationService.getById(bike.stationId);
-        await this.stationService.edit({
-          ...station,
-          bikes: [...station.bikes, dbBike.id],
+        const id = station.id;
+        delete station.id;
+
+        const bikes = [...station.bikes, dbBike.id];
+
+        await this.prisma.station.update({
+          where: {
+            id,
+          },
+          data: {
+            ...station,
+            location: JSON.stringify(station.location),
+            bikes: JSON.stringify(bikes),
+          },
         });
       }
 
@@ -87,9 +101,20 @@ export class BikeService {
           const oldStation = await this.stationService.getById(
             dbBike.stationId
           );
-          await this.stationService.edit({
-            ...oldStation,
-            bikes: oldStation.bikes.filter((b) => b !== dbUpdatedBike.id),
+          const id = oldStation.id;
+          delete oldStation.id;
+
+          const bikes = oldStation.bikes.filter((b) => b !== dbUpdatedBike.id);
+
+          await this.prisma.station.update({
+            where: {
+              id,
+            },
+            data: {
+              ...oldStation,
+              location: JSON.stringify(oldStation.location),
+              bikes: JSON.stringify(bikes),
+            },
           });
         }
 
@@ -97,9 +122,20 @@ export class BikeService {
           const newStation = await this.stationService.getById(
             bikeDto.stationId
           );
-          await this.stationService.edit({
-            ...newStation,
-            bikes: [...newStation.bikes, dbUpdatedBike.id],
+          const id = newStation.id;
+          delete newStation.id;
+
+          const bikes = [...newStation.bikes, dbUpdatedBike.id];
+
+          await this.prisma.station.update({
+            where: {
+              id,
+            },
+            data: {
+              ...newStation,
+              location: JSON.stringify(newStation.location),
+              bikes: JSON.stringify(bikes),
+            },
           });
         }
       }
@@ -121,9 +157,20 @@ export class BikeService {
 
       if (dbBike.stationId) {
         const station = await this.stationService.getById(dbBike.stationId);
-        await this.stationService.edit({
-          ...station,
-          bikes: station.bikes.filter((b) => b !== dbBike.id),
+        const bikes = station.bikes.filter((b) => b !== dbBike.id);
+
+        const id = station.id;
+        delete station.id;
+
+        await this.prisma.station.update({
+          where: {
+            id,
+          },
+          data: {
+            ...station,
+            location: JSON.stringify(station.location),
+            bikes: JSON.stringify(bikes),
+          },
         });
       }
 

@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -21,6 +23,7 @@ import { EErrorMessages } from '@shared/enums';
 export class StationService {
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => BikeService))
     private readonly bikeService: BikeService
   ) {}
 
@@ -61,17 +64,53 @@ export class StationService {
       });
 
       const promises = station.bikes.map((bikeId) => {
-        return (async () => {
+        return async () => {
+          const localPromises = [];
           const bike = await this.bikeService.getById(bikeId);
 
-          await this.bikeService.edit({
-            ...bike,
-            stationId: createdStation.id,
-          });
-        })();
+          const id = bike.id;
+          delete bike.id;
+
+          localPromises.push(
+            this.prisma.bike.update({
+              where: {
+                id,
+              },
+              data: {
+                ...bike,
+                stationId: createdStation.id,
+              },
+            })
+          );
+
+          if (bike.stationId) {
+            const station = await this.getById(bike.stationId);
+            const id = station.id;
+            delete station.id;
+
+            const bikes = station.bikes.filter((b) => b !== bikeId);
+
+            localPromises.push(
+              this.prisma.station.update({
+                where: {
+                  id,
+                },
+                data: {
+                  ...station,
+                  bikes: JSON.stringify(bikes),
+                  location: JSON.stringify(station.location),
+                },
+              })
+            );
+          }
+
+          await Promise.all(localPromises);
+        };
       });
 
-      await Promise.all(promises);
+      for (const promise of promises) {
+        await promise();
+      }
 
       return this.deserialize(createdStation);
     } catch (error) {
@@ -100,42 +139,83 @@ export class StationService {
         data: serializedStation,
       });
 
-      const oldBikes = JSON.parse(dbStation.bikes.toString());
+      const oldBikes = dbStation.bikes;
       const newBikes = stationDto.bikes;
 
-      const promises = newBikes
-        .map((bikeId) => {
-          const isWithinOldBikes = oldBikes.includes(bikeId);
-          if (isWithinOldBikes) return;
+      const promises = newBikes.map((bikeId) => {
+        const isWithinOldBikes = oldBikes.includes(bikeId);
+        if (isWithinOldBikes) return;
 
-          return (async () => {
-            const bike = await this.bikeService.getById(bikeId);
+        return async () => {
+          const bike = await this.bikeService.getById(bikeId);
+          const id = bike.id;
+          delete bike.id;
 
-            await this.bikeService.edit({
-              ...bike,
-              stationId: dbUpdatedStation.id,
-            });
-          })();
-        })
-        .filter(Boolean);
+          const localPromises = [];
+
+          localPromises.push(
+            this.prisma.bike.update({
+              where: {
+                id,
+              },
+              data: {
+                ...bike,
+                stationId: dbUpdatedStation.id,
+              },
+            })
+          );
+
+          if (bike.stationId && bike.stationId !== dbUpdatedStation.id) {
+            const oldStation = await this.getById(bike.stationId);
+            const id = oldStation.id;
+            delete oldStation.id;
+
+            const bikes = oldStation.bikes.filter((b) => b !== bikeId);
+
+            localPromises.push(
+              this.prisma.station.update({
+                where: {
+                  id,
+                },
+                data: {
+                  ...oldStation,
+                  location: JSON.stringify(oldStation.location),
+                  bikes: JSON.stringify(bikes),
+                },
+              })
+            );
+          }
+
+          await Promise.all(localPromises);
+        };
+      });
 
       oldBikes.forEach((bikeId) => {
         const isWithinNewBikes = newBikes.includes(bikeId);
         if (isWithinNewBikes) return;
 
-        promises.push(
-          (async () => {
-            const bike = await this.bikeService.getById(bikeId);
+        promises.push(async () => {
+          const bike = await this.bikeService.getById(bikeId);
+          if (!bike.stationId) return;
 
-            await this.bikeService.edit({
+          const id = bike.id;
+          delete bike.id;
+
+          await this.prisma.bike.update({
+            where: {
+              id,
+            },
+            data: {
               ...bike,
               stationId: null,
-            });
-          })()
-        );
+            },
+          });
+        });
       });
 
-      await Promise.all(promises);
+      for (const promise of promises) {
+        await promise();
+      }
 
       return this.deserialize(dbUpdatedStation);
     } catch (error) {
@@ -154,17 +234,26 @@ export class StationService {
       const bikes = JSON.parse(dbStation.bikes.toString());
 
       const promises = bikes.map((bikeId) => {
-        return (async () => {
+        return async () => {
           const bike = await this.bikeService.getById(bikeId);
+          const id = bike.id;
+          delete bike.id;
 
-          await this.bikeService.edit({
-            ...bike,
-            stationId: null,
+          await this.prisma.bike.update({
+            where: {
+              id,
+            },
+            data: {
+              ...bike,
+              stationId: null,
+            },
           });
-        })();
+        };
       });
 
-      await Promise.all(promises);
+      for (const promise of promises) {
+        await promise();
+      }
 
       return true;
     } catch (error) {
