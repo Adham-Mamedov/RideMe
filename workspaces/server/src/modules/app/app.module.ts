@@ -6,10 +6,11 @@ import { AppController } from '@server/modules/app/app.controller';
 import { UserModule } from '@server/modules/user/user.module';
 import { AuthModule } from '@server/modules/auth/auth.module';
 import { StationModule } from '@server/modules/station/station.module';
+import { BikeModule } from '@server/modules/bike/bike.module';
+import { RideModule } from '@server/modules/ride/ride.module';
 
 import AppConfig from '@server/app.config';
 import { validateEnv } from '@server/common/utils/validation.utils';
-import { BikeModule } from '@server/modules/bike/bike.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { BikeModule } from '@server/modules/bike/bike.module';
     UserModule,
     StationModule,
     BikeModule,
+    RideModule,
   ],
   controllers: [AppController],
   providers: [AppService],

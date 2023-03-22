@@ -45,19 +45,11 @@ const RideTimer: FC<IProps> = () => {
 
   const finishRide = useCallback(() => {
     // TODO: finish ride
-    const rideCost = (() => {
-      const now = new Date().getTime();
-      const difference = now - activeRide?.timeStart?.getTime()!;
-      const minutes = Math.ceil(difference / 1000 / 60); // TODO: subtract free minutes;
-      return minutes * 1000;
-    })();
 
     const ride: IRide = {
       ...activeRide!,
-      timeEnd: new Date(),
       stationToId: '2',
       distance: Math.random() * 5,
-      cost: rideCost,
     };
     setActiveRide(ride);
     setShowPostRideModal(true);

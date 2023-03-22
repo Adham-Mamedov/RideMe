@@ -6,6 +6,7 @@ export enum ERoute {
   Users = '/users',
   Stations = '/stations',
   Bikes = '/bikes',
+  Rides = '/rides',
 }
 
 export enum Role {

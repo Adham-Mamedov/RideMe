@@ -3,7 +3,7 @@ import { IUser } from '@shared/types/auth.types';
 export interface IRide {
   id: string;
   userId?: IUser['id'];
-  bikeId?: IBike['id'];
+  bikeId: IBike['id'];
   stationFromId: IStation['id'];
   stationToId: IStation['id'] | null;
   timeStart: Date;
@@ -34,7 +34,7 @@ export interface IStation {
 }
 
 export interface IComment {
-  id: string;
+  id?: string;
   rideId: IRide['id'];
   text: string;
   createdAt: Date;
