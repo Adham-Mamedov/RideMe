@@ -8,6 +8,7 @@ import { AuthModule } from '@server/modules/auth/auth.module';
 import { StationModule } from '@server/modules/station/station.module';
 import { BikeModule } from '@server/modules/bike/bike.module';
 import { RideModule } from '@server/modules/ride/ride.module';
+import { CommentModule } from '@server/modules/comment/comment.module';
 
 import AppConfig from '@server/app.config';
 import { validateEnv } from '@server/common/utils/validation.utils';
@@ -27,6 +28,7 @@ import { validateEnv } from '@server/common/utils/validation.utils';
     StationModule,
     BikeModule,
     RideModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
