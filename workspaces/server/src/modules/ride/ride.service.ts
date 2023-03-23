@@ -69,7 +69,7 @@ export class RideService {
 
       return exclude<IRide, 'userId'>(createdRide, ['userId']);
     } catch (error) {
-      Logger.error(error, 'RideService:createStation');
+      Logger.error(error, 'RideService:create');
       throw new InternalServerErrorException(EErrorMessages.CreateRideFailed);
     }
   }
@@ -114,8 +114,8 @@ export class RideService {
 
       return exclude<IRide, 'userId'>(updatedRide, ['userId']);
     } catch (error) {
-      Logger.error(error, 'BikeService:editStation');
-      throw new InternalServerErrorException(EErrorMessages.EditBikeFailed);
+      Logger.error(error, 'RideService:edit');
+      throw new InternalServerErrorException(EErrorMessages.EditRideFailed);
     }
   }
 
@@ -128,8 +128,8 @@ export class RideService {
       });
       return true;
     } catch (error) {
-      Logger.error(error, 'RideService:deleteStation');
-      throw new InternalServerErrorException(EErrorMessages.DeleteBikeFailed);
+      Logger.error(error, 'RideService:delete');
+      throw new InternalServerErrorException(EErrorMessages.DeleteRideFailed);
     }
   }
 }

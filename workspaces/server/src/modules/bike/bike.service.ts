@@ -75,7 +75,7 @@ export class BikeService {
 
       return dbBike;
     } catch (error) {
-      Logger.error(error, 'BikeService:createStation');
+      Logger.error(error, 'BikeService:create');
       throw new InternalServerErrorException(EErrorMessages.CreateBikeFailed);
     }
   }
@@ -142,7 +142,7 @@ export class BikeService {
 
       return dbUpdatedBike;
     } catch (error) {
-      Logger.error(error, 'BikeService:editStation');
+      Logger.error(error, 'BikeService:edit');
       throw new InternalServerErrorException(EErrorMessages.EditBikeFailed);
     }
   }
@@ -176,7 +176,7 @@ export class BikeService {
 
       return true;
     } catch (error) {
-      Logger.error(error, 'BikeService:deleteStation');
+      Logger.error(error, 'BikeService:delete');
       throw new InternalServerErrorException(EErrorMessages.DeleteBikeFailed);
     }
   }
