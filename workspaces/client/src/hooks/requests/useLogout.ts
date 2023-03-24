@@ -12,9 +12,7 @@ const useLogout = () => {
     () => axios.post(`${ERoute.Auth}/logout`),
     {
       enabled: false,
-      onError(error) {
-        console.log(error);
-      },
+      onError() {},
       onSuccess() {
         router.push('/');
       },

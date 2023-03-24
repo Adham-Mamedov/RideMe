@@ -25,6 +25,7 @@ interface IProps {
   updateFormData: (event: any, key: string, subKey?: string) => void;
   loading: boolean;
   submitHandler: (e: any) => void;
+  backHandler: (e: any, value: number) => void;
 }
 
 const CardDetailsForm: FC<IProps> = ({
@@ -32,6 +33,7 @@ const CardDetailsForm: FC<IProps> = ({
   updateFormData,
   loading,
   submitHandler,
+  backHandler,
 }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -88,8 +90,17 @@ const CardDetailsForm: FC<IProps> = ({
         />
         <FormErrorMessage>{errors['expDate']}</FormErrorMessage>
       </FormControl>
+
       <Button variant="primary" type={'submit'} w="100%" disabled={loading}>
         {loading ? <Loader size="32px" /> : 'Register'}
+      </Button>
+      <Button
+        type={'button'}
+        w="100%"
+        disabled={loading}
+        onClick={(e) => backHandler(e, 1)}
+      >
+        Back
       </Button>
       <Text>
         Already have account?{' '}

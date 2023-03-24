@@ -49,7 +49,7 @@ const LoginPage: NextPage = () => {
         setLoading(false);
       }
     },
-    [axios, formData, router, setLoading]
+    [axios, formData, router]
   );
 
   return (

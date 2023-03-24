@@ -17,7 +17,7 @@ import { IRegisterUser } from '@shared/types/auth.types';
 interface IProps {
   formData: IRegisterUser;
   updateFormData: (event: any, key: string) => void;
-  submitHandler: (e: any) => void;
+  submitHandler: (e: any, value: number) => void;
 }
 
 const AccountDetailsForm: FC<IProps> = ({
@@ -46,7 +46,7 @@ const AccountDetailsForm: FC<IProps> = ({
 
   const onSubmit = (e: any) => {
     if (validate()) {
-      submitHandler(e);
+      submitHandler(e, 2);
     } else {
       e.preventDefault();
     }

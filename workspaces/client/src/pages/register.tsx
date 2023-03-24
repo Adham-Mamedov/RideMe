@@ -46,9 +46,9 @@ const RegisterPage: NextPage = () => {
     []
   );
 
-  const handleStageChange = useCallback((e: any) => {
+  const handleStageChange = useCallback((e: any, value: number) => {
     e.preventDefault();
-    setProcessStep(2);
+    setProcessStep(value);
   }, []);
 
   const submitHandler = useCallback(
@@ -63,7 +63,7 @@ const RegisterPage: NextPage = () => {
         setLoading(false);
       }
     },
-    [axios, formData, router, setLoading]
+    [axios, formData, router]
   );
 
   const formContent = useMemo(() => {
@@ -82,6 +82,7 @@ const RegisterPage: NextPage = () => {
         updateFormData={updateFormData}
         loading={loading}
         submitHandler={submitHandler}
+        backHandler={handleStageChange}
       />
     );
   }, [
