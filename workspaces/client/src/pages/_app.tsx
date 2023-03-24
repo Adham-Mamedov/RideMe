@@ -8,6 +8,7 @@ import {
   QueryClientProvider,
 } from 'react-query';
 
+import NotificationsProvider from '@client/components/shared/NotificationsProvider';
 import AuthProvider from '@client/components/shared/AuthProvider';
 import HTMLHead from '@client/components/shared/HTMLHead';
 
@@ -35,9 +36,11 @@ const NextApp = (props: NextAppProps) => {
       <Hydrate state={props.pageProps.dehydratedState}>
         <ChakraProvider theme={customTheme}>
           <HTMLHead />
-          <AuthProvider>
-            <Page {...props} />
-          </AuthProvider>
+          <NotificationsProvider>
+            <AuthProvider>
+              <Page {...props} />
+            </AuthProvider>
+          </NotificationsProvider>
         </ChakraProvider>
       </Hydrate>
     </QueryClientProvider>
