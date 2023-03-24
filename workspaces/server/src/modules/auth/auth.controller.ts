@@ -41,7 +41,6 @@ export class AuthController {
   @Post('logout')
   @HttpCode(200)
   @ApiOkResponse({ type: SuccessEntity })
-  @UseGuards(AuthGuard)
   logoutUser(@Res({ passthrough: true }) res: FastifyReply) {
     return this.authService.logout(res);
   }

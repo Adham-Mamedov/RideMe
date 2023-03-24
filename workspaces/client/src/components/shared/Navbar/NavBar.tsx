@@ -22,6 +22,7 @@ import {
 } from '@client/utils/defaults';
 import { INavLink } from '@shared/types/client.types';
 import PostRideModal from '@client/components/shared/Navbar/PostRideModal';
+import useLogout from '@client/hooks/requests/useLogout';
 
 interface IProps {}
 
@@ -29,15 +30,20 @@ const NavBar: FC<IProps> = ({}) => {
   const user = useAuthStore((state) => state.user);
   const activeRide = useGlobalStore((state) => state.activeRide);
 
+  const { refetch: logout } = useLogout();
+
   const navLinks = useMemo<INavLink[]>(() => {
     let links: INavLink[];
     if (!user) {
       links = unauthenticatedLinks;
     } else {
-      links = authenticatedLinks;
+      links = authenticatedLinks.map((link) => {
+        if (link.label === 'Log out') link.onClick = logout;
+        return link;
+      });
     }
     return links;
-  }, [user]);
+  }, [logout, user]);
 
   return (
     <Card {...wrapperCardStyles}>
@@ -61,7 +67,7 @@ const NavBar: FC<IProps> = ({}) => {
                 <RideTimer />
               </WrapItem>
             )}
-            {navLinks.map(({ label, href, type }) => (
+            {navLinks.map(({ label, href, type, onClick }) => (
               <WrapItem
                 key={href}
                 color={type === 'link' ? 'primary' : 'textGray'}
@@ -70,7 +76,7 @@ const NavBar: FC<IProps> = ({}) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Link href={href} title={label}>
+                <Link href={href} onClick={onClick} title={label}>
                   {label}
                 </Link>
               </WrapItem>
