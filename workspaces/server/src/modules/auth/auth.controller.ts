@@ -20,6 +20,7 @@ import { ECookieNames, ERoute } from '@shared/enums';
 import { RequestUser } from '@shared/types/auth.types';
 import { LoginDto } from '@server/modules/auth/dto/auth.dto';
 import { SuccessEntity } from '@server/common/entities/common.entities';
+import { CreateUserDto } from '@server/modules/user/dto/user.dto';
 
 @Controller(ERoute.Auth)
 @ApiTags('Auth Controller')
@@ -36,6 +37,17 @@ export class AuthController {
     @Res({ passthrough: true }) res: FastifyReply
   ): Promise<SuccessEntity> {
     return this.authService.login(res, loginDto);
+  }
+
+  @Post('register')
+  @ApiOkResponse({
+    type: SuccessEntity,
+  })
+  async registerUser(
+    @Body() dto: CreateUserDto,
+    @Res({ passthrough: true }) res: FastifyReply
+  ): Promise<SuccessEntity> {
+    return this.authService.register(res, dto);
   }
 
   @Post('logout')

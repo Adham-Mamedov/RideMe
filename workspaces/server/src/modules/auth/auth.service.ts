@@ -20,6 +20,7 @@ import { ExpirationTime } from '@server/modules/auth/strategies';
 import { ECookieNames, EErrorMessages } from '@shared/enums';
 import { RequestUser } from '@shared/types/auth.types';
 import { LoginDto } from '@server/modules/auth/dto/auth.dto';
+import { CreateUserDto } from '@server/modules/user/dto/user.dto';
 import { SuccessEntity } from '@server/common/entities/common.entities';
 import { UserEntity } from '@server/modules/user/entities/user.entity';
 
@@ -121,6 +122,19 @@ export class AuthService {
     this.setCookieWithUser(res, returnUser);
 
     return { success: true };
+  }
+
+  async register(
+    res: FastifyReply,
+    dto: CreateUserDto
+  ): Promise<SuccessEntity> {
+    try {
+      const user = await this.userService.createUser(dto);
+      return await this.handleTokenUpdates(res, user);
+    } catch (error) {
+      Logger.warn(`${dto.email}: ${error}`, 'AuthService:register');
+      throw error;
+    }
   }
 
   async login(res: FastifyReply, loginDto: LoginDto): Promise<SuccessEntity> {

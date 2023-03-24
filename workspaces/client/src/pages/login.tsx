@@ -69,6 +69,7 @@ const LoginPage: NextPage = () => {
         <Flex
           as="form"
           flexDir="column"
+          alignItems="center"
           gap={['1rem', '1.5rem']}
           onSubmit={submitHandler}
         >
@@ -88,7 +89,7 @@ const LoginPage: NextPage = () => {
               type="password"
             />
           </FormControl>
-          <Button variant="primary" type={'submit'} disabled={loading}>
+          <Button variant="primary" type={'submit'} w="100%" disabled={loading}>
             {loading ? <Loader size="32px" /> : 'Login'}
           </Button>
           <Text>

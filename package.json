@@ -9,7 +9,7 @@
   "scripts": {
     "client": "dotenv -e .env yarn workspace client",
     "server": "dotenv -e .env yarn workspace server",
-    "db:init": "dotenv -e .env yarn workspace server prisma:init",
+    "db:init": "dotenv -e .env yarn workspace server prisma:push",
     "clean:outputs": "rimraf workspaces/client/.next workspaces/server/dist",
     "clean:modules": "rimraf node_modules workspaces/client/node_modules workspaces/server/node_modules",
     "clean:all": "yarn clean:outputs && yarn clean:modules",

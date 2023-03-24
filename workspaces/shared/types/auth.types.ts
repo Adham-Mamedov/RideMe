@@ -23,3 +23,13 @@ export interface RequestUser {
 export interface RequestWithUser extends FastifyRequest {
   user: RequestUser;
 }
+
+export interface IRegisterUser {
+  password: string;
+  email: string;
+  name: string;
+  card: {
+    number: string;
+    expDate: string;
+  };
+}

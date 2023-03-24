@@ -5,6 +5,7 @@
   "scripts": {
     "prisma:init": "yarn prisma migrate dev --name \"init\" --schema=./prisma/base.prisma",
     "prisma:generate": "yarn prisma generate --schema=./prisma/base.prisma",
+    "prisma:push": "npx prisma db push --schema=./prisma/base.prisma",
     "prisma:build": "yarn prisma:generate",
     "prebuild": "rimraf dist && yarn prisma:build",
     "build": "nest build",
