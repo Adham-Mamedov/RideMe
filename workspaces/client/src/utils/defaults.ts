@@ -32,6 +32,6 @@ export const aboutUsStatistics: IAboutUsStatistics[] = [
 
 export const defaultStationData: IStation = {
   title: '',
-  location: [41, 69],
+  location: [41.31185, 69.242534],
   bikes: [],
 };

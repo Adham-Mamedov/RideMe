@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic';
 import {
   ChangeEvent,
   FC,
@@ -31,6 +32,11 @@ import { useAdminStore } from '@client/stores/AdminStore';
 import { IStation } from '@shared/types/assets.types';
 import { defaultStationData } from '@client/utils/defaults';
 
+const Map = dynamic(
+  () => import('@client/components/admin/stationsPage/SingleStationMap'),
+  { ssr: false }
+);
+
 interface IProps {
   title: string;
   ctaText: string;
@@ -56,8 +62,8 @@ const StationFormModal: FC<IProps> = ({
   );
 
   useEffect(() => {
-    setStationData(station || defaultStationData);
-  }, [station]);
+    isOpen && setStationData(station || defaultStationData);
+  }, [station, isOpen]);
 
   const bikeList = useMemo(
     () => [...getBikesByStationId(stationData.id), ...unAssignedBikes],
@@ -112,7 +118,7 @@ const StationFormModal: FC<IProps> = ({
             onSubmit={submitHandler}
           >
             <FormControl isRequired>
-              <FormLabel fontWeight={400}>Station Title</FormLabel>
+              <FormLabel fontWeight={500}>Station Title</FormLabel>
               <Input
                 value={stationData.title}
                 onChange={(event) =>
@@ -122,11 +128,19 @@ const StationFormModal: FC<IProps> = ({
               />
             </FormControl>
             <FormControl isRequired>
-              <FormLabel fontWeight={400}>Station Location</FormLabel>
-              <Box h="300px" />
+              <FormLabel fontWeight={500}>Station Location</FormLabel>
+              <Box h="300px" w="100%" overflow="hidden">
+                <Map
+                  lat={stationData.location[0]}
+                  lng={stationData.location[1]}
+                  setPosition={(value: IStation['location']) => {
+                    updateStationData(value, 'location');
+                  }}
+                />
+              </Box>
             </FormControl>
             <FormControl isRequired>
-              <FormLabel fontWeight={400}>Station Location</FormLabel>
+              <FormLabel fontWeight={500}>Station Location</FormLabel>
               <List>
                 {bikeList.length === 0 && (
                   <ListItem>No bikes available</ListItem>
