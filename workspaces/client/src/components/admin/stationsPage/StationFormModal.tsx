@@ -145,7 +145,7 @@ const StationFormModal: FC<IProps> = ({
               </Box>
             </FormControl>
             <FormControl>
-              <FormLabel fontWeight={500}>Station Location</FormLabel>
+              <FormLabel fontWeight={500}>Assign available bikes</FormLabel>
               <List>
                 {bikeList.length === 0 && (
                   <ListItem>No bikes available</ListItem>

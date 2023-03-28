@@ -12,53 +12,54 @@ import {
   Thead,
   Tr,
   Flex,
+  Badge,
 } from '@chakra-ui/react';
 import { MdDelete, MdModeEdit } from 'react-icons/md';
 import { AiOutlinePlus } from 'react-icons/ai';
 
 import Pagination from '@client/components/shared/Pagination';
-import StationFormModal from '@client/components/admin/stationsPage/StationFormModal';
 import Loader from '@client/components/shared/Loader';
 
 import {
-  useCreateStation,
-  useUpdateStation,
-  useDeleteStation,
-} from '@client/hooks/requests/stations';
+  useCreateBike,
+  useUpdateBike,
+  useDeleteBike,
+} from '@client/hooks/requests/bikes';
 import { useAdminStore } from '@client/stores/AdminStore';
 
-import { IStation } from '@shared/types/assets.types';
+import { IBike } from '@shared/types/assets.types';
+import BikeFormModal from '@client/components/admin/bikesPage/BikeFormModal';
 
 const PAGE_SIZE = 5;
 
 interface IProps {}
 
-const StationsList: FC<IProps> = ({}) => {
+const BikesList: FC<IProps> = ({}) => {
   const [page, setPage] = useState(0);
-  const [isNewStationModalOpen, setIsNewStationModalOpen] = useState(false);
-  const [isEditStationModalOpen, setIsEditStationModalOpen] = useState(false);
-  const [stationToEdit, setStationToEdit] = useState<IStation | undefined>();
+  const [isNewBikeModalOpen, setIsNewBikeModalOpen] = useState(false);
+  const [isEditBikeModalOpen, setIsEditBikeModalOpen] = useState(false);
+  const [bikeToEdit, setBikeToEdit] = useState<IBike | undefined>();
 
   const loading = useAdminStore((state) => state.loading);
-  const stations = useAdminStore((state) => state.stations);
+  const bikes = useAdminStore((state) => state.bikes);
 
-  const currentStations = useMemo(
-    () => stations.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE),
-    [page, stations]
+  const currentBikes = useMemo(
+    () => bikes.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE),
+    [page, bikes]
   );
 
-  const { mutate: createStation } = useCreateStation();
-  const { mutate: updateStation } = useUpdateStation();
-  const { mutate: deleteStation } = useDeleteStation();
+  const { mutate: createBike } = useCreateBike();
+  const { mutate: updateBike } = useUpdateBike();
+  const { mutate: deleteBike } = useDeleteBike();
 
   if (loading) return <Loader size="100px" />;
 
-  if (!stations) return <Heading>There are no stations</Heading>;
+  if (!bikes) return <Heading>There are no bikes</Heading>;
 
   return (
     <Container>
       <Heading fontWeight="600" as="h2" fontSize="1.25rem" mb="1rem">
-        Stations
+        Bikes
       </Heading>
       <Flex flexDir="column" gap="1rem">
         <TableContainer border="1px solid #E2E8F0" borderRadius="lg">
@@ -66,20 +67,35 @@ const StationsList: FC<IProps> = ({}) => {
             <Thead>
               <Tr>
                 <Th>Name</Th>
-                <Th>Bikes Assigned</Th>
+                <Th>Trial Period (min)</Th>
+                <Th>Price per Minute</Th>
+                <Th>Status</Th>
                 <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {currentStations.map((station) => {
-                const bikesCount = station.bikes.length;
-                const color = bikesCount > 0 ? 'green' : 'red';
+              {currentBikes.map((bike) => {
+                const minutesColor = bike.freeMinutes > 0 ? 'green' : 'red';
+                const priceColor = bike.pricePerMinute > 0 ? 'green' : 'red';
+
+                let status;
+                if (bike.isBroken) {
+                  status = <Badge colorScheme="red">Broken</Badge>;
+                } else if (bike.isAvailable) {
+                  status = <Badge colorScheme="green">Available</Badge>;
+                } else {
+                  // TODO: FINISH when rides are implemented
+                  status = <Badge colorScheme="purple">In use</Badge>;
+                }
+
                 return (
-                  <Tr key={station.id}>
+                  <Tr key={bike.id}>
                     <Td textOverflow="ellipsis" overflow="hidden" maxW="350px">
-                      {station.title}
+                      {bike.title}
                     </Td>
-                    <Td color={color}>{bikesCount}</Td>
+                    <Td color={minutesColor}>{bike.freeMinutes}</Td>
+                    <Td color={priceColor}>{bike.pricePerMinute}</Td>
+                    <Td>{status}</Td>
                     <Td display="flex" gap="0.5rem">
                       <Button
                         size="sm"
@@ -88,8 +104,8 @@ const StationsList: FC<IProps> = ({}) => {
                         gap="0.4rem"
                         p="0.5rem"
                         onClick={() => {
-                          setIsEditStationModalOpen(true);
-                          setStationToEdit(station);
+                          setIsEditBikeModalOpen(true);
+                          setBikeToEdit(bike);
                         }}
                       >
                         <MdModeEdit size="1.75rem" />
@@ -102,7 +118,7 @@ const StationsList: FC<IProps> = ({}) => {
                         gap="0.4rem"
                         p="0.5rem"
                         onClick={() => {
-                          deleteStation(station.id);
+                          deleteBike(bike.id);
                         }}
                       >
                         <MdDelete size="1.75rem" />
@@ -115,15 +131,15 @@ const StationsList: FC<IProps> = ({}) => {
             </Tbody>
           </Table>
           <Heading fontWeight="600" as="h3" fontSize="1rem" p="1rem">
-            Total number of stations:
+            Total number of bikes:
             <Text ml="1rem" color="primary" as="span">
-              {stations.length}
+              {bikes.length}
             </Text>
           </Heading>
         </TableContainer>
         <Flex justifyContent="space-between">
           <Pagination
-            list={stations}
+            list={bikes}
             setPage={setPage}
             page={page}
             pageSize={PAGE_SIZE}
@@ -133,36 +149,36 @@ const StationsList: FC<IProps> = ({}) => {
             variant="outline"
             colorScheme="whatsapp"
             gap="0.5rem"
-            onClick={() => setIsNewStationModalOpen(true)}
+            onClick={() => setIsNewBikeModalOpen(true)}
           >
             <AiOutlinePlus size="1.75rem" />
-            Add Station
+            Add Bike
           </Button>
         </Flex>
       </Flex>
 
-      <StationFormModal
-        title="Add New Station"
+      <BikeFormModal
+        title="Add New Bike"
         ctaText="Create"
-        isOpen={isNewStationModalOpen}
-        onClose={(station?: IStation) => {
-          setIsNewStationModalOpen(false);
-          station && createStation(station);
+        isOpen={isNewBikeModalOpen}
+        onClose={(bike?: IBike) => {
+          setIsNewBikeModalOpen(false);
+          bike && createBike(bike);
         }}
       />
-      <StationFormModal
-        title="Edit Station"
+      <BikeFormModal
+        title="Edit Bike"
         ctaText="Edit"
-        isOpen={isEditStationModalOpen}
-        onClose={(station?: IStation) => {
-          setIsEditStationModalOpen(false);
-          setStationToEdit(undefined);
-          station && updateStation(station);
+        isOpen={isEditBikeModalOpen}
+        onClose={(bike?: IBike) => {
+          setIsEditBikeModalOpen(false);
+          setBikeToEdit(undefined);
+          bike && updateBike(bike);
         }}
-        station={stationToEdit}
+        bike={bikeToEdit}
       />
     </Container>
   );
 };
 
-export default memo(StationsList);
+export default memo(BikesList);

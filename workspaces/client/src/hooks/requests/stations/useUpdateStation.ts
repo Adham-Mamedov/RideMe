@@ -19,7 +19,7 @@ const useUpdateStation = () => {
         .put<IStation>(`${ERoute.Stations}/edit`, station)
         .then(({ data }) => data),
     {
-      retry: 3,
+      retry: 2,
       onSuccess: () => {
         displaySuccess({ message: 'Station updated' });
       },

@@ -21,7 +21,7 @@ const useDeleteStation = () => {
         })
         .then(({ data }) => data),
     {
-      retry: 3,
+      retry: 2,
       onSuccess: (success) => {
         success && displaySuccess({ message: 'Station deleted' });
       },

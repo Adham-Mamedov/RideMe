@@ -19,7 +19,7 @@ const useCreateStation = () => {
         .post<IStation>(`${ERoute.Stations}/create`, station)
         .then(({ data }) => data),
     {
-      retry: 3,
+      retry: 2,
       onSuccess: () => {
         displaySuccess({ message: 'Station created' });
       },

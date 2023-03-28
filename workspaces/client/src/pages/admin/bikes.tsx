@@ -1,16 +1,16 @@
 import { NextPage } from 'next';
 
 import AdminPrimary from '@client/components/shared/layouts/AdminPrimary';
-import StationsList from '@client/components/admin/stationsPage/StationsList';
+import BikesList from '@client/components/admin/bikesPage/BikesList';
 
-const StationsPage: NextPage = () => {
+const BikesPage: NextPage = () => {
   return (
     <AdminPrimary>
-      <StationsList />
+      <BikesList />
     </AdminPrimary>
   );
 };
 
 export { getAuthServerSideProps as getServerSideProps } from '@client/utils/getAuthServerSideProps';
 
-export default StationsPage;
+export default BikesPage;

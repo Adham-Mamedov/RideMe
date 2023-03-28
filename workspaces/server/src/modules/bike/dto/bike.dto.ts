@@ -7,6 +7,8 @@ import {
   MaxLength,
   MinLength,
   IsOptional,
+  Min,
+  Max,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Bike, Station } from '@prisma/client';
@@ -45,21 +47,23 @@ export class CreateBikeDto {
   @ApiProperty({ example: 26 })
   @IsNumber()
   @IsPositive()
+  @Max(50)
   wheelSize: Bike['wheelSize'];
 
   @ApiProperty({ example: 150 })
   @IsNumber()
   @IsPositive()
+  @Max(250)
   recommendedHeight: Bike['recommendedHeight'];
 
   @ApiProperty({ example: 30 })
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   freeMinutes: Bike['freeMinutes'];
 
   @ApiProperty({ example: 1000 })
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   pricePerMinute: Bike['pricePerMinute'];
 }
 
@@ -101,21 +105,23 @@ export class EditBikeDto {
   @ApiProperty({ example: 26 })
   @IsNumber()
   @IsPositive()
+  @Max(50)
   wheelSize: Bike['wheelSize'];
 
   @ApiProperty({ example: 150 })
   @IsNumber()
   @IsPositive()
+  @Max(250)
   recommendedHeight: Bike['recommendedHeight'];
 
   @ApiProperty({ example: 30 })
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   freeMinutes: Bike['freeMinutes'];
 
   @ApiProperty({ example: 1000 })
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   pricePerMinute: Bike['pricePerMinute'];
 }
 

@@ -1,6 +1,6 @@
 import { FC, memo, ReactNode, useEffect } from 'react';
 import { useAdminStore } from '@client/stores/AdminStore';
-import useFetchBikes from '@client/hooks/requests/useFetchBikes';
+import { useFetchBikes } from '@client/hooks/requests/bikes';
 import { useFetchStations } from '@client/hooks/requests/stations';
 
 interface IProps {

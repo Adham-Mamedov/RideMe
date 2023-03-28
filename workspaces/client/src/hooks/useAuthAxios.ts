@@ -44,9 +44,12 @@ export const useAuthAxios = () => {
     } else if (error.response?.status === 401) {
       refreshAuthToken();
     } else {
+      const message = error.response?.data?.message;
       displayError({
         title: 'Error',
-        message: error.response?.data?.message || 'Something went wrong!',
+        message: Array.isArray(message)
+          ? message.join(', ')
+          : message || 'Something went wrong!',
       });
     }
     throw error;

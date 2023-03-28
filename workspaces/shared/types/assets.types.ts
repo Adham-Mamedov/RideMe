@@ -14,7 +14,7 @@ export interface IRide {
 
 export interface IBike {
   id?: string;
-  stationId: IStation['id'];
+  stationId?: IStation['id'];
   isAvailable: boolean;
   isBroken: boolean;
   title: string;

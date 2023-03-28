@@ -1,5 +1,5 @@
 import { INavLink, IAboutUsStatistics } from '@shared/types/client.types';
-import { IStation } from '@shared/types/assets.types';
+import { IBike, IStation } from '@shared/types/assets.types';
 
 export const unauthenticatedLinks: INavLink[] = [
   { label: 'Login', href: '/login', type: 'link' },
@@ -34,4 +34,17 @@ export const defaultStationData: IStation = {
   title: '',
   location: [41.31185, 69.242534],
   bikes: [],
+};
+
+export const defaultBikeData: IBike = {
+  title: '',
+  stationId: undefined,
+  description: '',
+  imageUrl: '',
+  wheelSize: 0,
+  recommendedHeight: 0,
+  freeMinutes: 0,
+  pricePerMinute: 0,
+  isAvailable: true,
+  isBroken: false,
 };
