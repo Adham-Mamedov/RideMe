@@ -1,4 +1,11 @@
-import { FC, memo, useCallback, useState } from 'react';
+import {
+  ChangeEvent,
+  FC,
+  memo,
+  MouseEvent,
+  useCallback,
+  useState,
+} from 'react';
 import {
   Button,
   Flex,
@@ -22,10 +29,14 @@ import { IRegisterUser } from '@shared/types/auth.types';
 
 interface IProps {
   formData: IRegisterUser;
-  updateFormData: (event: any, key: string, subKey?: string) => void;
+  updateFormData: (
+    event: ChangeEvent<HTMLInputElement>,
+    key: string,
+    subKey?: string
+  ) => void;
   loading: boolean;
   submitHandler: (e: any) => void;
-  backHandler: (e: any, value: number) => void;
+  backHandler: (e: MouseEvent<HTMLButtonElement>, value: number) => void;
 }
 
 const CardDetailsForm: FC<IProps> = ({

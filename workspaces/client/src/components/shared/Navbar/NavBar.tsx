@@ -17,6 +17,7 @@ import { useAuthStore } from '@client/stores/AuthStore';
 import RideTimer from './RideTimer';
 
 import {
+  adminLinks,
   authenticatedLinks,
   unauthenticatedLinks,
 } from '@client/utils/defaults';
@@ -37,10 +38,12 @@ const NavBar: FC<IProps> = ({}) => {
     if (!user) {
       links = unauthenticatedLinks;
     } else {
-      links = authenticatedLinks.map((link) => {
-        if (link.label === 'Log out') link.onClick = logout;
-        return link;
-      });
+      links = (user.role === 'User' ? authenticatedLinks : adminLinks).map(
+        (link) => {
+          if (link.label === 'Log out') link.onClick = logout;
+          return link;
+        }
+      );
     }
     return links;
   }, [logout, user]);

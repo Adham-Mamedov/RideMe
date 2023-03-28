@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useMemo, useState } from 'react';
+import { ChangeEvent, MouseEvent, useCallback, useMemo, useState } from 'react';
 import { Card, Heading } from '@chakra-ui/react';
 
 import AccountDetailsForm from '@client/components/registerPage/AccountDetailsForm';
@@ -30,7 +30,7 @@ const RegisterPage: NextPage = () => {
   const axios = useAxios();
 
   const updateFormData = useCallback(
-    (event: any, key: string, subKey?: string) => {
+    (event: ChangeEvent<HTMLInputElement>, key: string, subKey?: string) => {
       setFormData((prevState) => ({
         ...prevState,
         [key]: !subKey
@@ -46,10 +46,13 @@ const RegisterPage: NextPage = () => {
     []
   );
 
-  const handleStageChange = useCallback((e: any, value: number) => {
-    e.preventDefault();
-    setProcessStep(value);
-  }, []);
+  const handleStageChange = useCallback(
+    (e: MouseEvent<HTMLButtonElement>, value: number) => {
+      e.preventDefault();
+      setProcessStep(value);
+    },
+    []
+  );
 
   const submitHandler = useCallback(
     async (e: any) => {

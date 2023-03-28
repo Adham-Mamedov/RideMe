@@ -8,7 +8,7 @@ import {
   QueryClientProvider,
 } from 'react-query';
 
-import NotificationsProvider from '@client/components/shared/NotificationsProvider';
+import NotificationsProvider from '@client/components/shared/providers/NotificationsProvider';
 import AuthProvider from '@client/components/shared/AuthProvider';
 import HTMLHead from '@client/components/shared/HTMLHead';
 

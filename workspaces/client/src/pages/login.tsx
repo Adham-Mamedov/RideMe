@@ -1,6 +1,6 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import {
   Button,
   Card,
@@ -30,12 +30,15 @@ const LoginPage: NextPage = () => {
   const router = useRouter();
   const axios = useAxios();
 
-  const updateFormData = useCallback((event: any, key: string) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      [key]: event.target.value,
-    }));
-  }, []);
+  const updateFormData = useCallback(
+    (event: ChangeEvent<HTMLInputElement>, key: string) => {
+      setFormData((prevState) => ({
+        ...prevState,
+        [key]: event.target.value,
+      }));
+    },
+    []
+  );
 
   const submitHandler = useCallback(
     async (e: any) => {

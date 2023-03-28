@@ -142,53 +142,55 @@ export class StationService {
       const oldBikes = dbStation.bikes;
       const newBikes = stationDto.bikes;
 
-      const promises = newBikes.map((bikeId) => {
-        const isWithinOldBikes = oldBikes.includes(bikeId);
-        if (isWithinOldBikes) return;
+      const promises = newBikes
+        .map((bikeId) => {
+          const isWithinOldBikes = oldBikes.includes(bikeId);
+          if (isWithinOldBikes) return;
 
-        return async () => {
-          const bike = await this.bikeService.getById(bikeId);
-          const id = bike.id;
-          delete bike.id;
+          return async () => {
+            const bike = await this.bikeService.getById(bikeId);
+            const id = bike.id;
+            delete bike.id;
 
-          const localPromises = [];
-
-          localPromises.push(
-            this.prisma.bike.update({
-              where: {
-                id,
-              },
-              data: {
-                ...bike,
-                stationId: dbUpdatedStation.id,
-              },
-            })
-          );
-
-          if (bike.stationId && bike.stationId !== dbUpdatedStation.id) {
-            const oldStation = await this.getById(bike.stationId);
-            const id = oldStation.id;
-            delete oldStation.id;
-
-            const bikes = oldStation.bikes.filter((b) => b !== bikeId);
+            const localPromises = [];
 
             localPromises.push(
-              this.prisma.station.update({
+              this.prisma.bike.update({
                 where: {
                   id,
                 },
                 data: {
-                  ...oldStation,
-                  location: JSON.stringify(oldStation.location),
-                  bikes: JSON.stringify(bikes),
+                  ...bike,
+                  stationId: dbUpdatedStation.id,
                 },
               })
             );
-          }
 
-          await Promise.all(localPromises);
-        };
-      });
+            if (bike.stationId && bike.stationId !== dbUpdatedStation.id) {
+              const oldStation = await this.getById(bike.stationId);
+              const id = oldStation.id;
+              delete oldStation.id;
+
+              const bikes = oldStation.bikes.filter((b) => b !== bikeId);
+
+              localPromises.push(
+                this.prisma.station.update({
+                  where: {
+                    id,
+                  },
+                  data: {
+                    ...oldStation,
+                    location: JSON.stringify(oldStation.location),
+                    bikes: JSON.stringify(bikes),
+                  },
+                })
+              );
+            }
+
+            await Promise.all(localPromises);
+          };
+        })
+        .filter(Boolean);
 
       oldBikes.forEach((bikeId) => {
         const isWithinNewBikes = newBikes.includes(bikeId);

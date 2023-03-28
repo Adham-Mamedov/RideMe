@@ -1,7 +1,7 @@
 import { IUser } from '@shared/types/auth.types';
 
 export interface IRide {
-  id: string;
+  id?: string;
   userId?: IUser['id'];
   bikeId: IBike['id'];
   stationFromId: IStation['id'];
@@ -13,7 +13,7 @@ export interface IRide {
 }
 
 export interface IBike {
-  id: string;
+  id?: string;
   stationId: IStation['id'];
   isAvailable: boolean;
   isBroken: boolean;
@@ -27,10 +27,10 @@ export interface IBike {
 }
 
 export interface IStation {
-  id: string;
+  id?: string;
   title: string;
   location: [number, number];
-  bikes: IBike['id'][];
+  bikes: string[];
 }
 
 export interface IComment {

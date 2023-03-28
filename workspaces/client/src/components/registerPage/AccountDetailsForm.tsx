@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useState } from 'react';
+import { ChangeEvent, FC, memo, useCallback, useState } from 'react';
 import {
   Button,
   Flex,
@@ -16,7 +16,7 @@ import { IRegisterUser } from '@shared/types/auth.types';
 
 interface IProps {
   formData: IRegisterUser;
-  updateFormData: (event: any, key: string) => void;
+  updateFormData: (event: ChangeEvent<HTMLInputElement>, key: string) => void;
   submitHandler: (e: any, value: number) => void;
 }
 
