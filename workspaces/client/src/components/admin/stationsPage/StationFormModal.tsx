@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import {
   ChangeEvent,
   FC,
+  FormEvent,
   memo,
   useCallback,
   useEffect,
@@ -92,9 +93,13 @@ const StationFormModal: FC<IProps> = ({
     [stationData.bikes, updateStationData]
   );
 
-  const submitHandler = useCallback((e: any) => {
-    e.preventDefault();
-  }, []);
+  const submitHandler = useCallback(
+    (e: FormEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      stationData.title.trim() && onClose(stationData);
+    },
+    [onClose, stationData]
+  );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -139,7 +144,7 @@ const StationFormModal: FC<IProps> = ({
                 />
               </Box>
             </FormControl>
-            <FormControl isRequired>
+            <FormControl>
               <FormLabel fontWeight={500}>Station Location</FormLabel>
               <List>
                 {bikeList.length === 0 && (
@@ -169,11 +174,7 @@ const StationFormModal: FC<IProps> = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            variant="primary"
-            form="station-form"
-            onClick={() => onClose(stationData)}
-          >
+          <Button type="submit" variant="primary" form="station-form">
             {ctaText}
           </Button>
         </ModalFooter>
