@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '@prisma/client';
 
@@ -8,6 +8,8 @@ export class CreateCommentDto {
   rideId: Comment['rideId'];
 
   @ApiProperty({ example: 'Some Comment from user.' })
+  @MaxLength(500)
+  @MinLength(3)
   @IsString()
   text: Comment['text'];
 }
@@ -18,6 +20,8 @@ export class EditCommentDto {
   id: Comment['id'];
 
   @ApiProperty({ example: 'Some Comment from user.' })
+  @MaxLength(500)
+  @MinLength(3)
   @IsString()
   text: Comment['text'];
 }

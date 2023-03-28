@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsPositive,
   MaxLength,
+  MinLength,
   IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
@@ -25,13 +26,15 @@ export class CreateBikeDto {
   isBroken: Bike['isBroken'];
 
   @ApiProperty({ example: 'Bike Title' })
-  @IsString()
   @MaxLength(300)
+  @MinLength(3)
+  @IsString()
   title: Bike['title'];
 
   @ApiProperty({ example: 'Bike Description' })
-  @IsString()
   @MaxLength(500)
+  @MinLength(3)
+  @IsString()
   description: Bike['description'];
 
   @ApiProperty({ example: 'https://example.com/image.png' })
@@ -79,13 +82,15 @@ export class EditBikeDto {
   isBroken: Bike['isBroken'];
 
   @ApiProperty({ example: 'Bike Title' })
-  @IsString()
   @MaxLength(300)
+  @MinLength(3)
+  @IsString()
   title: Bike['title'];
 
   @ApiProperty({ example: 'Bike Description' })
-  @IsString()
   @MaxLength(500)
+  @MinLength(3)
+  @IsString()
   description: Bike['description'];
 
   @ApiProperty({ example: 'https://example.com/image.png' })

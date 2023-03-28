@@ -1,4 +1,10 @@
-import { IsEmail, IsObject, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsObject,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
@@ -8,6 +14,8 @@ export class CreateUserDto {
   email: User['email'];
 
   @ApiProperty({ example: 'password' })
+  @MaxLength(100)
+  @MinLength(1)
   @IsString()
   password: User['password'];
 
