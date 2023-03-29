@@ -47,9 +47,9 @@ const StationsList: FC<IProps> = ({}) => {
     [page, stations]
   );
 
-  const { mutate: createStation } = useCreateStation();
-  const { mutate: updateStation } = useUpdateStation();
-  const { mutate: deleteStation } = useDeleteStation();
+  const { mutateAsync: createStation } = useCreateStation();
+  const { mutateAsync: updateStation } = useUpdateStation();
+  const { mutateAsync: deleteStation } = useDeleteStation();
 
   if (loading) return <Loader size="100px" />;
 
@@ -145,19 +145,23 @@ const StationsList: FC<IProps> = ({}) => {
         title="Add New Station"
         ctaText="Create"
         isOpen={isNewStationModalOpen}
-        onClose={(station?: IStation) => {
-          setIsNewStationModalOpen(false);
-          station && createStation(station);
+        onClose={async (station?: IStation) => {
+          try {
+            station && (await createStation(station));
+            setIsNewStationModalOpen(false);
+          } catch {}
         }}
       />
       <StationFormModal
         title="Edit Station"
         ctaText="Edit"
         isOpen={isEditStationModalOpen}
-        onClose={(station?: IStation) => {
-          setIsEditStationModalOpen(false);
-          setStationToEdit(undefined);
-          station && updateStation(station);
+        onClose={async (station?: IStation) => {
+          try {
+            station && (await updateStation(station));
+            setIsEditStationModalOpen(false);
+            setStationToEdit(undefined);
+          } catch {}
         }}
         station={stationToEdit}
       />

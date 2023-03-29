@@ -125,6 +125,7 @@ const StationFormModal: FC<IProps> = ({
             <FormControl isRequired>
               <FormLabel fontWeight={500}>Station Title</FormLabel>
               <Input
+                placeholder="Station Title"
                 value={stationData.title}
                 onChange={(event) =>
                   updateStationData(event.currentTarget.value, 'title')

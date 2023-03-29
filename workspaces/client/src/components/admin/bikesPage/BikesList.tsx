@@ -48,9 +48,9 @@ const BikesList: FC<IProps> = ({}) => {
     [page, bikes]
   );
 
-  const { mutate: createBike } = useCreateBike();
-  const { mutate: updateBike } = useUpdateBike();
-  const { mutate: deleteBike } = useDeleteBike();
+  const { mutateAsync: createBike } = useCreateBike();
+  const { mutateAsync: updateBike } = useUpdateBike();
+  const { mutateAsync: deleteBike } = useDeleteBike();
 
   if (loading) return <Loader size="100px" />;
 
@@ -161,19 +161,23 @@ const BikesList: FC<IProps> = ({}) => {
         title="Add New Bike"
         ctaText="Create"
         isOpen={isNewBikeModalOpen}
-        onClose={(bike?: IBike) => {
-          setIsNewBikeModalOpen(false);
-          bike && createBike(bike);
+        onClose={async (bike?: IBike) => {
+          try {
+            bike && (await createBike(bike));
+            setIsNewBikeModalOpen(false);
+          } catch {}
         }}
       />
       <BikeFormModal
         title="Edit Bike"
         ctaText="Edit"
         isOpen={isEditBikeModalOpen}
-        onClose={(bike?: IBike) => {
-          setIsEditBikeModalOpen(false);
-          setBikeToEdit(undefined);
-          bike && updateBike(bike);
+        onClose={async (bike?: IBike) => {
+          try {
+            bike && (await updateBike(bike));
+            setIsEditBikeModalOpen(false);
+            setBikeToEdit(undefined);
+          } catch {}
         }}
         bike={bikeToEdit}
       />
