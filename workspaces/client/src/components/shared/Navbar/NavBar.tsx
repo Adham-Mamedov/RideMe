@@ -1,4 +1,4 @@
-import { FC, memo, useMemo } from 'react';
+import { FC, memo, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import {
   Box,
@@ -28,8 +28,11 @@ import useLogout from '@client/hooks/requests/useLogout';
 interface IProps {}
 
 const NavBar: FC<IProps> = ({}) => {
+  const navbarRef = useRef<HTMLDivElement>(null);
+
   const user = useAuthStore((state) => state.user);
   const activeRide = useGlobalStore((state) => state.activeRide);
+  const setNavBarHeight = useGlobalStore((state) => state.setNavBarHeight);
 
   const { refetch: logout } = useLogout();
 
@@ -48,8 +51,12 @@ const NavBar: FC<IProps> = ({}) => {
     return links;
   }, [logout, user]);
 
+  useEffect(() => {
+    navbarRef.current && setNavBarHeight(navbarRef.current?.offsetHeight);
+  }, [navbarRef.current, setNavBarHeight]);
+
   return (
-    <Card {...wrapperCardStyles}>
+    <Card {...wrapperCardStyles} ref={navbarRef}>
       <Container {...containerStyles}>
         <Link href="/">
           <Heading

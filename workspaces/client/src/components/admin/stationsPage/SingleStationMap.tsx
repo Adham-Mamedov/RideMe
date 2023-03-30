@@ -28,7 +28,7 @@ const SingleStationMap: FC<IProps> = ({ lat, lng, setPosition }) => {
       />
       <LocationMarker
         editable
-        onClick={setPosition}
+        onMapClick={setPosition}
         initialPosition={{ lat, lng }}
       />
     </MapContainer>

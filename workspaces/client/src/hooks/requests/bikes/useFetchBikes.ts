@@ -2,12 +2,14 @@ import { useQuery } from 'react-query';
 
 import { useAuthAxios } from '@client/hooks/useAuthAxios';
 import { useAdminStore } from '@client/stores/AdminStore';
+import { useGlobalStore } from '@client/stores/GlobalStore';
 
 import { IBike } from '@shared/types/assets.types';
 import { EReactQueryKeys, ERoute } from '@shared/enums';
 
 const useFetchBikes = () => {
-  const setBikes = useAdminStore((state) => state.setBikes);
+  const setAdminBikes = useAdminStore((state) => state.setBikes);
+  const setGlobalBikes = useGlobalStore((state) => state.setBikes);
 
   const axios = useAuthAxios();
 
@@ -16,7 +18,8 @@ const useFetchBikes = () => {
     () => axios.get<IBike[]>(ERoute.Bikes).then(({ data }) => data),
     {
       onSuccess: (data) => {
-        setBikes(data);
+        setAdminBikes(data);
+        setGlobalBikes(data);
       },
     }
   );

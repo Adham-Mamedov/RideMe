@@ -7,7 +7,11 @@ import Footer from '@client/components/shared/Footer/Footer';
 
 const HomePage: NextPage = () => {
   return (
-    <ClientPrimaryLayout>
+    <ClientPrimaryLayout
+      props={{
+        gap: ['2rem', null, '5rem'],
+      }}
+    >
       <Motivation />
       <AboutUs />
       <Testimonials />

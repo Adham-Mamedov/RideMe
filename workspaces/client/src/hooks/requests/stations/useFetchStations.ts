@@ -1,12 +1,14 @@
 import { useQuery } from 'react-query';
 
 import { useAdminStore } from '@client/stores/AdminStore';
+import { useGlobalStore } from '@client/stores/GlobalStore';
 import { useAuthAxios } from '@client/hooks/useAuthAxios';
 
 import { EReactQueryKeys, ERoute } from '@shared/enums';
 
 const useFetchStations = () => {
-  const setStations = useAdminStore((state) => state.setStations);
+  const setAdminStations = useAdminStore((state) => state.setStations);
+  const setGlobalStations = useGlobalStore((state) => state.setStations);
 
   const axios = useAuthAxios();
 
@@ -15,7 +17,8 @@ const useFetchStations = () => {
     () => axios.get(ERoute.Stations).then(({ data }) => data),
     {
       onSuccess: (data) => {
-        setStations(data);
+        setAdminStations(data);
+        setGlobalStations(data);
       },
     }
   );

@@ -29,6 +29,50 @@ export const customTheme = extendTheme({
     },
   },
   components: {
+    Drawer: {
+      baseStyle: {
+        dialog: {
+          left: [null, null, null, null, '400px!important'],
+          width: [
+            '100%!important',
+            null,
+            null,
+            null,
+            'calc(100vw - 400px)!important',
+          ],
+          minH: '500px!important',
+        },
+      },
+    },
+    Tabs: {
+      baseStyle: {
+        root: {
+          display: [null, null, 'flex'],
+        },
+        tab: {
+          minW: ['50%', null, null, '300px'],
+          maxW: ['50%', null, '300px'],
+          maxH: '80px',
+          display: 'block',
+          justifyContent: 'start',
+          textAlign: 'start',
+          borderBottom: '2px solid',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          borderColor: ['borderPrimary', null, 'transparent'],
+          _selected: {
+            borderColor: 'blue.600',
+            color: 'primary',
+          },
+        },
+        tablist: {
+          flexDir: [null, null, 'column'],
+          flexWrap: 'wrap',
+          padding: ['1rem 0', null, '0 1rem 0 0'],
+          borderRight: [null, null, '2px solid #E2E8F0'],
+        },
+      },
+    },
     Container: {
       baseStyle: {
         maxW: '1180px',

@@ -1,32 +1,75 @@
-import { FC, memo, useState } from 'react';
-import L, { LatLngExpression } from 'leaflet';
+import { FC, memo, useEffect, useState } from 'react';
+import L, { LatLng } from 'leaflet';
 import { Marker, useMapEvents } from 'react-leaflet';
 
 import { IStation } from '@shared/types/assets.types';
 
 interface IProps {
-  onClick: (value: IStation['location']) => void | VoidFunction;
-  initialPosition?: LatLngExpression;
+  onMapClick?: (value: IStation['location']) => void | VoidFunction;
+  initialPosition?: Partial<LatLng>;
   editable?: boolean;
+  onMarkerClick?: () => void;
+  enlarged?: boolean;
 }
 
-const LocationMarker: FC<IProps> = ({ onClick, initialPosition, editable }) => {
-  const [position, setPosition] = useState<LatLngExpression | null>(
+const LocationMarker: FC<IProps> = ({
+  onMapClick,
+  initialPosition,
+  editable,
+  onMarkerClick,
+  enlarged,
+}) => {
+  const [position, setPosition] = useState<Partial<LatLng> | null>(
     initialPosition || null
   );
-  useMapEvents({
+
+  const map = useMapEvents({
     click(e) {
       editable && setPosition(e.latlng);
-      onClick([e.latlng.lat, e.latlng.lng]);
+      onMapClick && onMapClick([e.latlng.lat, e.latlng.lng]);
     },
   });
 
+  useEffect(() => {
+    if (initialPosition && enlarged) {
+      const initialZoom = map.getZoom();
+      let zoomLevel = initialZoom ** 0.9;
+      zoomLevel *= initialZoom > 15 ? 2 : initialZoom < 13 ? 0.1 : 0.2;
+
+      map.flyTo(
+        {
+          lat: initialPosition.lat! - initialPosition.lat! / 2000 / zoomLevel,
+          lng: initialPosition.lng!,
+        },
+        undefined,
+        {
+          duration: 0.6,
+        }
+      );
+    }
+  }, [position, enlarged, map, initialPosition]);
+
+  const markerEventHandlers = {
+    click: () => {
+      onMarkerClick && onMarkerClick();
+    },
+  };
+
   const icon = L.icon({
     iconUrl: '/images/map_location_icon.png',
-    iconAnchor: [16, 32],
+    iconAnchor: enlarged ? [24, 48] : [16, 32],
+    iconSize: enlarged ? [48, 48] : [32, 32],
   });
 
-  return position && <Marker position={position} icon={icon} />;
+  return (
+    position && (
+      <Marker
+        position={position as LatLng}
+        icon={icon}
+        eventHandlers={markerEventHandlers}
+      />
+    )
+  );
 };
 
 export default memo(LocationMarker);

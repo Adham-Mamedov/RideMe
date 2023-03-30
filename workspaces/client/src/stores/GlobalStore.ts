@@ -4,6 +4,8 @@ import { IBike, IRide, IStation } from '@shared/types/assets.types';
 interface IGlobalStore {
   loading: boolean;
   setLoading: (loading: boolean) => void;
+  navBarHeight: number;
+  setNavBarHeight: (navBarHeight: number) => void;
   activeRide: IRide | null;
   setActiveRide: (activeRide: IRide | null) => void;
   showPostRideModal: boolean;
@@ -18,6 +20,8 @@ interface IGlobalStore {
 export const useGlobalStore = create<IGlobalStore>()((set, get) => ({
   loading: false,
   setLoading: (loading: boolean) => set(() => ({ loading })),
+  navBarHeight: 0,
+  setNavBarHeight: (navBarHeight: number) => set(() => ({ navBarHeight })),
   activeRide: null,
   setActiveRide: (activeRide: any) => set(() => ({ activeRide })),
   showPostRideModal: false,

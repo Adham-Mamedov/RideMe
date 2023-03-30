@@ -26,7 +26,7 @@ export const useAuthAxios = () => {
       enabled: false,
       onError(error) {
         const err = error as AxiosError;
-        if (err.response?.status === 401) {
+        if (err.response?.status === 400 || err.response?.status === 401) {
           displayError({
             title: 'Session expired',
             message: 'Your session has expired. Please login again.',

@@ -9,6 +9,14 @@ const nextConfig = {
   experimental: {
     externalDir: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
+  },
   async rewrites() {
     return {
       beforeFiles: [

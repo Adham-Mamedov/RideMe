@@ -2,3 +2,8 @@
 @import "page-loader";
 @import "loader";
 @import "page403";
+
+
+.chakra-modal__content-container:has(> #chakra-modal-station-drawer) {
+  height: auto;
+}
