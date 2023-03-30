@@ -19,7 +19,6 @@ const HomePage: NextPage = () => {
   const [activeStation, setActiveStation] = useState<IStation | null>(null);
 
   const navBarHeight = useGlobalStore((state) => state.navBarHeight);
-  const stations = useGlobalStore((state) => state.stations);
 
   const showStationDetails = useCallback((station: IStation) => {
     setActiveStation(station);
@@ -36,7 +35,6 @@ const HomePage: NextPage = () => {
         />
         <Box w="100%" minH="pageHeight" overflow="hidden" position="relative">
           <Map
-            stations={stations}
             activeStation={activeStation}
             onLocationClick={showStationDetails}
           />

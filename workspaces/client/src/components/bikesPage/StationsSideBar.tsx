@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, memo, useCallback, useState } from 'react';
+import { ChangeEvent, FC, memo, useCallback, useEffect, useState } from 'react';
 import {
   Text,
   Card,
@@ -26,12 +26,23 @@ const StationsSideBar: FC<IProps> = ({ onClick, activeStation }) => {
   const [searchText, setSearchText] = useState<string>('');
 
   const stations = useGlobalStore((state) => state.stations);
+  const filteredStations = useGlobalStore((state) => state.filteredStations);
+  const setFilteredStations = useGlobalStore(
+    (state) => state.setFilteredStations
+  );
 
   const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const text = e.currentTarget.value;
     setSearchText(text);
-    // TODO: filter stations
   }, []);
+
+  useEffect(() => {
+    setFilteredStations(
+      stations.filter((station) =>
+        station.title.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [setFilteredStations, searchText, stations]);
 
   return (
     <Flex
@@ -61,7 +72,10 @@ const StationsSideBar: FC<IProps> = ({ onClick, activeStation }) => {
         Results
       </Heading>
       <List display="flex" flexDir="column" gap="1rem">
-        {stations.map((station) => {
+        {filteredStations.length === 0 && (
+          <Text color="textGray">No results found</Text>
+        )}
+        {filteredStations.map((station) => {
           const bikeCount = station.bikes.length;
           const bikeColor = bikeCount > 0 ? 'success' : 'critical';
           return (

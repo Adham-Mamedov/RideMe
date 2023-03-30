@@ -6,6 +6,7 @@ export enum ERoute {
   Users = '/users',
   Stations = '/stations',
   Bikes = '/bikes',
+  AvailableBikes = '/bikes?available=true',
   Rides = '/rides',
   Comments = '/comments',
 }
@@ -55,6 +56,7 @@ export enum EReactQueryKeys {
   stationsUpdate = 'stationsUpdate',
   stationsDelete = 'stationsDelete',
   bikes = 'bikes',
+  availableBikes = 'availableBikes',
   bikesCreate = 'bikesCreate',
   bikesUpdate = 'bikesUpdate',
   bikesDelete = 'bikesDelete',

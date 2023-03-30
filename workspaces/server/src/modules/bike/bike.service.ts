@@ -26,8 +26,16 @@ export class BikeService {
     private readonly stationService: StationService
   ) {}
 
-  async getAll(): Promise<Bike[]> {
+  async getAll(availableOnly?: boolean): Promise<Bike[]> {
     try {
+      if (availableOnly) {
+        return this.prisma.bike.findMany({
+          where: {
+            isAvailable: true,
+            isBroken: false,
+          },
+        });
+      }
       return this.prisma.bike.findMany();
     } catch (error) {
       Logger.error(error, 'BikeService:getAll');

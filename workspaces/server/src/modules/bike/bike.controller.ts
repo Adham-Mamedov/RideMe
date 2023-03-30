@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -30,8 +31,8 @@ export class BikeController {
   @Get()
   @ApiOkResponse({ type: BikeEntity, isArray: true })
   @UseGuards(RoleGuard(Role.User))
-  async getAll() {
-    return this.bikeService.getAll();
+  async getAll(@Query('available') availableOnly: boolean) {
+    return this.bikeService.getAll(availableOnly);
   }
 
   @Get('/:id')

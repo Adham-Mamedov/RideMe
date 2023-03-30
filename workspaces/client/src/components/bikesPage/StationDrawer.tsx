@@ -58,6 +58,7 @@ const StationDrawer: FC<IProps> = ({ station, setStation }) => {
       orientation="vertical"
       onClose={onClose}
       closeOnOverlayClick={false}
+      trapFocus={false}
     >
       <DrawerContent>
         <DrawerCloseButton />

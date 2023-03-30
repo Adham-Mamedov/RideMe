@@ -3,22 +3,21 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 
 import LocationMarker from '@client/components/shared/LocationMarker';
 
+import { useGlobalStore } from '@client/stores/GlobalStore';
+
 import { IStation } from '@shared/types/assets.types';
 import { defaultStationData } from '@client/utils/defaults';
 
 import 'leaflet/dist/leaflet.css';
 
 interface IProps {
-  stations: IStation[];
   onLocationClick: (station: IStation) => void;
   activeStation: IStation | null;
 }
 
-const StationsMap: FC<IProps> = ({
-  stations,
-  onLocationClick,
-  activeStation,
-}) => {
+const StationsMap: FC<IProps> = ({ onLocationClick, activeStation }) => {
+  const filteredStations = useGlobalStore((state) => state.filteredStations);
+
   return (
     <MapContainer
       style={{
@@ -32,7 +31,7 @@ const StationsMap: FC<IProps> = ({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {stations.map((station) => (
+      {filteredStations.map((station) => (
         <LocationMarker
           key={station.id}
           enlarged={station.id === activeStation?.id}

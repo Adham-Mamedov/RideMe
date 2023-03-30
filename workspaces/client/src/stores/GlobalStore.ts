@@ -13,6 +13,8 @@ interface IGlobalStore {
   bikes: IBike[];
   setBikes: (bikes: IBike[]) => void;
   stations: IStation[];
+  filteredStations: IStation[];
+  setFilteredStations: (stations: IStation[]) => void;
   setStations: (stations: IStation[]) => void;
   getBikesByStationId: (stationId: IStation['id']) => IBike[];
 }
@@ -30,6 +32,9 @@ export const useGlobalStore = create<IGlobalStore>()((set, get) => ({
   bikes: [],
   setBikes: (bikes: IBike[]) => set(() => ({ bikes })),
   stations: [],
+  filteredStations: [],
+  setFilteredStations: (stations: IStation[]) =>
+    set(() => ({ filteredStations: stations })),
   setStations: (stations: IStation[]) => set(() => ({ stations })),
   getBikesByStationId: (stationId: IStation['id']) => {
     return get().bikes.filter((bike) => bike.stationId === stationId);

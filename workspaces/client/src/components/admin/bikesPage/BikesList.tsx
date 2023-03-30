@@ -84,7 +84,6 @@ const BikesList: FC<IProps> = ({}) => {
                 } else if (bike.isAvailable) {
                   status = <Badge colorScheme="green">Available</Badge>;
                 } else {
-                  // TODO: FINISH when rides are implemented
                   status = <Badge colorScheme="purple">In use</Badge>;
                 }
 
