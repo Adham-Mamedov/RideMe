@@ -15,15 +15,19 @@ import {
 } from '@chakra-ui/react';
 
 import { useGlobalStore } from '@client/stores/GlobalStore';
-import { IComment } from '@shared/types/assets.types';
+import useCreateComment from '@client/hooks/requests/comments/useCreateComment';
+
+import { CreateCommentDto } from '@server/modules/comment/dto/comment.dto';
 
 interface IProps {}
 
 const PostRideModal: FC<IProps> = ({}) => {
+  const [comment, setComment] = useState<string>('');
+
   const postRide = useGlobalStore((state) => state.postRide);
   const setPostRide = useGlobalStore((state) => state.setPostRide);
 
-  const [comment, setComment] = useState<string>('');
+  const { mutate: createComment, isLoading } = useCreateComment();
 
   const distanceTraveled = useMemo<string>(() => {
     return postRide?.distance?.toFixed(2)!;
@@ -46,13 +50,12 @@ const PostRideModal: FC<IProps> = ({}) => {
   }, [postRide]);
 
   const onClose = () => {
-    if (!comment.trim()) {
-      const commentOnRide: IComment = {
+    if (comment.trim()) {
+      const commentOnRide: CreateCommentDto = {
         text: comment,
-        createdAt: new Date(),
         rideId: postRide?.id!,
       };
-      // TODO: save comment to db
+      createComment(commentOnRide);
     }
     setPostRide(null);
   };
@@ -106,7 +109,12 @@ const PostRideModal: FC<IProps> = ({}) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={onClose}
+            disabled={isLoading}
+          >
             OK
           </Button>
         </ModalFooter>

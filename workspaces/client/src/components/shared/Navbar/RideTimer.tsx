@@ -32,7 +32,7 @@ const RideTimer: FC<IProps> = () => {
     const ride: EditRideDto = {
       id: activeRide?.id!,
       stationToId: randomStation.id!,
-      distance: Math.random() * 5,
+      distance: +(Math.random() * 5).toFixed(2),
     };
     updateRide(ride);
   }, [activeRide, stations, updateRide]);
