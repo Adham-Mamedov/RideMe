@@ -12,6 +12,11 @@ export class CreateCommentDto {
   @MinLength(3)
   @IsString()
   text: Comment['text'];
+
+  constructor(rideId: string, text: string) {
+    this.rideId = rideId;
+    this.text = text;
+  }
 }
 
 export class EditCommentDto {
@@ -24,10 +29,19 @@ export class EditCommentDto {
   @MinLength(3)
   @IsString()
   text: Comment['text'];
+
+  constructor(id: string, text: string) {
+    this.id = id;
+    this.text = text;
+  }
 }
 
 export class DeleteCommentDto {
   @ApiProperty({ example: 'id' })
   @IsString()
   id: Comment['id'];
+
+  constructor(id: string) {
+    this.id = id;
+  }
 }

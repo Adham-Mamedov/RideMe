@@ -65,6 +65,30 @@ export class CreateBikeDto {
   @IsNumber()
   @Min(0)
   pricePerMinute: Bike['pricePerMinute'];
+
+  constructor(
+    stationId: Station['id'] | null,
+    isAvailable: Bike['isAvailable'],
+    isBroken: Bike['isBroken'],
+    title: Bike['title'],
+    description: Bike['description'],
+    imageUrl: Bike['imageUrl'],
+    wheelSize: Bike['wheelSize'],
+    recommendedHeight: Bike['recommendedHeight'],
+    freeMinutes: Bike['freeMinutes'],
+    pricePerMinute: Bike['pricePerMinute']
+  ) {
+    this.stationId = stationId;
+    this.isAvailable = isAvailable;
+    this.isBroken = isBroken;
+    this.title = title;
+    this.description = description;
+    this.imageUrl = imageUrl;
+    this.wheelSize = wheelSize;
+    this.recommendedHeight = recommendedHeight;
+    this.freeMinutes = freeMinutes;
+    this.pricePerMinute = pricePerMinute;
+  }
 }
 
 export class EditBikeDto {
@@ -123,10 +147,40 @@ export class EditBikeDto {
   @IsNumber()
   @Min(0)
   pricePerMinute: Bike['pricePerMinute'];
+
+  constructor(
+    id: string,
+    stationId: Station['id'] | null,
+    isAvailable: Bike['isAvailable'],
+    isBroken: Bike['isBroken'],
+    title: Bike['title'],
+    description: Bike['description'],
+    imageUrl: Bike['imageUrl'],
+    wheelSize: Bike['wheelSize'],
+    recommendedHeight: Bike['recommendedHeight'],
+    freeMinutes: Bike['freeMinutes'],
+    pricePerMinute: Bike['pricePerMinute']
+  ) {
+    this.id = id;
+    this.stationId = stationId;
+    this.isAvailable = isAvailable;
+    this.isBroken = isBroken;
+    this.title = title;
+    this.description = description;
+    this.imageUrl = imageUrl;
+    this.wheelSize = wheelSize;
+    this.recommendedHeight = recommendedHeight;
+    this.freeMinutes = freeMinutes;
+    this.pricePerMinute = pricePerMinute;
+  }
 }
 
 export class DeleteBikeDto {
   @ApiProperty({ example: 'id' })
   @IsString()
   id: Bike['id'];
+
+  constructor(id: string) {
+    this.id = id;
+  }
 }

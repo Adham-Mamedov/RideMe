@@ -124,6 +124,7 @@ export class RideService {
           ...dbRide,
           ...ride,
           cost,
+          distance: +ride.distance.toFixed(2),
           timeEnd: new Date(),
         },
       });

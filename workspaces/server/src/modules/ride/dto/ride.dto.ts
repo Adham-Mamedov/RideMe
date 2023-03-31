@@ -10,6 +10,11 @@ export class CreateRideDto {
   @ApiProperty({ example: 'stationFromId' })
   @IsString()
   stationFromId: Ride['stationFromId'];
+
+  constructor(bikeId: string, stationFromId: string) {
+    this.bikeId = bikeId;
+    this.stationFromId = stationFromId;
+  }
 }
 
 export class EditRideDto {
@@ -26,10 +31,20 @@ export class EditRideDto {
   @IsPositive()
   @IsNumber()
   distance: Ride['distance'];
+
+  constructor(id: string, stationToId: string, distance: number) {
+    this.id = id;
+    this.stationToId = stationToId;
+    this.distance = distance;
+  }
 }
 
 export class DeleteRideDto {
   @ApiProperty({ example: 'id' })
   @IsString()
   id: Ride['id'];
+
+  constructor(id: string) {
+    this.id = id;
+  }
 }

@@ -42,8 +42,12 @@ export class CommentService {
 
   async create(data: CreateCommentDto): Promise<Comment> {
     try {
+      const comment = {
+        ...data,
+        createdAt: new Date(),
+      };
       return this.prisma.comment.create({
-        data,
+        data: comment,
       });
     } catch (error) {
       Logger.error(error, 'CommentService:create');

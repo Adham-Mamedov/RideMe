@@ -25,6 +25,12 @@ export class CreateStationDto {
   @ApiProperty({ example: ['bikeId1', 'bikeId2'] })
   @IsArray()
   bikes: Array<string>;
+
+  constructor(title: string, location: Array<number>, bikes: Array<string>) {
+    this.title = title;
+    this.location = location;
+    this.bikes = bikes;
+  }
 }
 
 export class EditStationDto {
@@ -47,10 +53,26 @@ export class EditStationDto {
   @ApiProperty({ example: ['bikeId1', 'bikeId2'] })
   @IsArray()
   bikes: Array<string>;
+
+  constructor(
+    id: string,
+    title: string,
+    location: Array<number>,
+    bikes: Array<string>
+  ) {
+    this.id = id;
+    this.title = title;
+    this.location = location;
+    this.bikes = bikes;
+  }
 }
 
 export class DeleteStationDto {
   @ApiProperty({ example: 'stationId' })
   @IsString()
   id: Station['id'];
+
+  constructor(id: string) {
+    this.id = id;
+  }
 }
