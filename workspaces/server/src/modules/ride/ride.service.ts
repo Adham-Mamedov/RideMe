@@ -29,7 +29,11 @@ export class RideService {
 
   async getAll(): Promise<IRide[]> {
     try {
-      const dbRides = await this.prisma.ride.findMany();
+      const dbRides = await this.prisma.ride.findMany({
+        orderBy: {
+          timeStart: 'desc',
+        },
+      });
 
       return excludeFromArray<IRide, 'userId'>(dbRides, ['userId']);
     } catch (error) {
@@ -43,6 +47,9 @@ export class RideService {
       const dbRides = await this.prisma.ride.findMany({
         where: {
           userId,
+        },
+        orderBy: {
+          timeStart: 'desc',
         },
       });
 

@@ -13,6 +13,7 @@ export const authenticatedLinks: INavLink[] = [
 ];
 
 export const adminLinks: INavLink[] = [
+  { label: 'Profile', href: '/profile', type: 'link' },
   { label: 'Stations', href: '/admin/stations', type: 'link' },
   { label: 'Bikes', href: '/admin/bikes', type: 'link' },
   { label: 'Log out', href: '/', type: 'linkSecondary' },
