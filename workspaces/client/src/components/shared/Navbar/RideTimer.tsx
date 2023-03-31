@@ -7,18 +7,35 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@chakra-ui/react';
+
 import { useGlobalStore } from '@client/stores/GlobalStore';
-import { IRide } from '@shared/types/assets.types';
+import useUpdateRide from '@client/hooks/requests/rides/useUpdateRide';
+
+import { pickRandomFromArray } from '@shared/utils/object.utils';
+import { EditRideDto } from '@server/modules/ride/dto/ride.dto';
 
 interface IProps {}
 
 const RideTimer: FC<IProps> = () => {
-  const setShowPostRideModal = useGlobalStore(
-    (state) => state.setShowPostRideModal
-  );
-  const activeRide = useGlobalStore((state) => state.activeRide);
-  const setActiveRide = useGlobalStore((state) => state.setActiveRide);
   const [stopwatchTime, setStopwatchTime] = useState<string>('00:00:00');
+
+  const stations = useGlobalStore((state) => state.stations);
+  const activeRide = useGlobalStore((state) => state.activeRide);
+
+  const { mutate: updateRide, isLoading } = useUpdateRide();
+
+  const finishRide = useCallback(() => {
+    const randomStation = pickRandomFromArray(
+      stations.filter((s) => s.id !== activeRide?.stationFromId)
+    );
+
+    const ride: EditRideDto = {
+      id: activeRide?.id!,
+      stationToId: randomStation.id!,
+      distance: Math.random() * 5,
+    };
+    updateRide(ride);
+  }, [activeRide, stations, updateRide]);
 
   const getStopwatchTime = useCallback(() => {
     if (!activeRide) return '00:00:00';
@@ -29,8 +46,7 @@ const RideTimer: FC<IProps> = () => {
     const diff = now - timeStart.getTime();
 
     if (diff > maxRideTime) {
-      // TODO: finish ride
-      setShowPostRideModal(true);
+      finishRide();
       return '00:00:00';
     }
 
@@ -41,19 +57,7 @@ const RideTimer: FC<IProps> = () => {
     return `${hours.toString().padStart(2, '0')}:${minutes
       .toString()
       .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }, [activeRide, setShowPostRideModal]);
-
-  const finishRide = useCallback(() => {
-    // TODO: finish ride
-
-    const ride: IRide = {
-      ...activeRide!,
-      stationToId: '2',
-      distance: Math.random() * 5,
-    };
-    setActiveRide(ride);
-    setShowPostRideModal(true);
-  }, [activeRide, setActiveRide, setShowPostRideModal]);
+  }, [activeRide, finishRide]);
 
   useEffect(() => {
     setStopwatchTime(getStopwatchTime());
@@ -89,7 +93,7 @@ const RideTimer: FC<IProps> = () => {
           fontWeight="700"
         >
           Finish current ride?
-          <Button colorScheme="red" onClick={finishRide}>
+          <Button colorScheme="red" onClick={finishRide} disabled={isLoading}>
             Finish
           </Button>
         </PopoverBody>

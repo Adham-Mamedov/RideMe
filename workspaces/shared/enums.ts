@@ -8,6 +8,7 @@ export enum ERoute {
   Bikes = '/bikes',
   AvailableBikes = '/bikes?available=true',
   Rides = '/rides',
+  RidesByUser = '/rides/by-user',
   Comments = '/comments',
 }
 
@@ -61,7 +62,9 @@ export enum EReactQueryKeys {
   bikesUpdate = 'bikesUpdate',
   bikesDelete = 'bikesDelete',
   rides = 'rides',
+  userRides = 'userRides',
   ridesCreate = 'ridesCreate',
+  ridesUpdate = 'ridesUpdate',
   comments = 'comments',
   commentsCreate = 'commentsCreate',
 }

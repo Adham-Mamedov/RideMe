@@ -38,6 +38,21 @@ export class RideService {
     }
   }
 
+  async getAllByUser(userId: RequestUser['id']): Promise<IRide[]> {
+    try {
+      const dbRides = await this.prisma.ride.findMany({
+        where: {
+          userId,
+        },
+      });
+
+      return excludeFromArray<IRide, 'userId'>(dbRides, ['userId']);
+    } catch (error) {
+      Logger.error(error, 'RideService:getAll');
+      throw new NotFoundException();
+    }
+  }
+
   async getById(id: string): Promise<IRide> {
     try {
       const dbRide = await this.prisma.ride.findUnique({
@@ -65,6 +80,12 @@ export class RideService {
           distance: 0,
           stationToId: null,
         },
+      });
+
+      const bike = await this.bikeService.getById(createdRide.bikeId);
+      await this.bikeService.edit({
+        ...bike,
+        isAvailable: false,
       });
 
       return exclude<IRide, 'userId'>(createdRide, ['userId']);
@@ -109,6 +130,7 @@ export class RideService {
 
       await this.bikeService.edit({
         ...bike,
+        isAvailable: true,
         stationId: updatedRide.stationToId,
       });
 

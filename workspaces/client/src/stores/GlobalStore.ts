@@ -8,15 +8,20 @@ interface IGlobalStore {
   setNavBarHeight: (navBarHeight: number) => void;
   activeRide: IRide | null;
   setActiveRide: (activeRide: IRide | null) => void;
-  showPostRideModal: boolean;
-  setShowPostRideModal: (showRideModal: boolean) => void;
+  postRide: IRide | null;
+  setPostRide: (postRide: IRide | null) => void;
   bikes: IBike[];
   setBikes: (bikes: IBike[]) => void;
   stations: IStation[];
   filteredStations: IStation[];
   setFilteredStations: (stations: IStation[]) => void;
   setStations: (stations: IStation[]) => void;
-  getBikesByStationId: (stationId: IStation['id']) => IBike[];
+  getBikesByStationId: (
+    stationId: IStation['id'],
+    availableOnly?: boolean
+  ) => IBike[];
+  rides: IRide[];
+  setRides: (rides: IRide[]) => void;
 }
 
 export const useGlobalStore = create<IGlobalStore>()((set, get) => ({
@@ -26,9 +31,8 @@ export const useGlobalStore = create<IGlobalStore>()((set, get) => ({
   setNavBarHeight: (navBarHeight: number) => set(() => ({ navBarHeight })),
   activeRide: null,
   setActiveRide: (activeRide: any) => set(() => ({ activeRide })),
-  showPostRideModal: false,
-  setShowPostRideModal: (showPostRideModal: boolean) =>
-    set(() => ({ showPostRideModal })),
+  postRide: null,
+  setPostRide: (postRide: IRide | null) => set(() => ({ postRide })),
   bikes: [],
   setBikes: (bikes: IBike[]) => set(() => ({ bikes })),
   stations: [],
@@ -39,4 +43,6 @@ export const useGlobalStore = create<IGlobalStore>()((set, get) => ({
   getBikesByStationId: (stationId: IStation['id']) => {
     return get().bikes.filter((bike) => bike.stationId === stationId);
   },
+  rides: [],
+  setRides: (rides: IRide[]) => set(() => ({ rides })),
 }));

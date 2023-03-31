@@ -109,7 +109,7 @@ const wrapperCardStyles: CardProps = {
   align: 'center',
   position: 'sticky',
   top: 0,
-  zIndex: 10,
+  zIndex: 401,
 };
 const containerStyles: ContainerProps = {
   h: '100%',

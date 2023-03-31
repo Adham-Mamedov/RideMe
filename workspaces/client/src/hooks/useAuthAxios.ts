@@ -9,7 +9,7 @@ import { useNotificationStore } from '@client/stores/NotificationStore';
 import { EReactQueryKeys, ERoute } from '@shared/enums';
 import { SuccessEntity } from '@server/common/entities/common.entities';
 
-export const useAuthAxios = () => {
+export const useAuthAxios = (skipAuth?: boolean) => {
   const instance = axios.create({ baseURL: ERoute.Api });
   const router = useRouter();
 
@@ -56,14 +56,15 @@ export const useAuthAxios = () => {
   });
 
   useEffect(() => {
-    instance
-      .get<SuccessEntity>(`${ERoute.Auth}/test`)
-      .catch((error: AxiosError) => {
-        if (error.response?.status === 401) {
-          refreshAuthToken();
-        }
-      });
-  }, []);
+    skipAuth ||
+      instance
+        .get<SuccessEntity>(`${ERoute.Auth}/test`)
+        .catch((error: AxiosError) => {
+          if (error.response?.status === 401) {
+            refreshAuthToken();
+          }
+        });
+  }, [skipAuth]);
 
   return useRef(instance).current;
 };

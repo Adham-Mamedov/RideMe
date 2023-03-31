@@ -26,6 +26,7 @@ const StationsMap: FC<IProps> = ({ onLocationClick, activeStation }) => {
       }}
       center={defaultStationData.location}
       zoom={13}
+      minZoom={12}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

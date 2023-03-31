@@ -32,14 +32,21 @@ export class RideController {
 
   @Get()
   @ApiOkResponse({ type: RideEntity, isArray: true })
-  @UseGuards(RoleGuard(Role.User))
+  @UseGuards(RoleGuard(Role.Admin))
   async getAll() {
     return this.rideService.getAll();
   }
 
-  @Get('/:id')
+  @Get('/by-user')
   @ApiOkResponse({ type: RideEntity, isArray: true })
   @UseGuards(RoleGuard(Role.User))
+  async getAllByUser(@User() user: RequestUser) {
+    return this.rideService.getAllByUser(user.id);
+  }
+
+  @Get('/:id')
+  @ApiOkResponse({ type: RideEntity, isArray: true })
+  @UseGuards(RoleGuard(Role.Admin))
   async getById(@Param('id') id: string) {
     return this.rideService.getById(id);
   }

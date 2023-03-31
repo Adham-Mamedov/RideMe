@@ -13,50 +13,48 @@ import {
   Text,
   Textarea,
 } from '@chakra-ui/react';
+
 import { useGlobalStore } from '@client/stores/GlobalStore';
 import { IComment } from '@shared/types/assets.types';
 
 interface IProps {}
 
 const PostRideModal: FC<IProps> = ({}) => {
-  const activeRide = useGlobalStore((state) => state.activeRide);
-  const showPostRideModal = useGlobalStore((state) => state.showPostRideModal);
-  const setShowPostRideModal = useGlobalStore(
-    (state) => state.setShowPostRideModal
-  );
+  const postRide = useGlobalStore((state) => state.postRide);
+  const setPostRide = useGlobalStore((state) => state.setPostRide);
 
   const [comment, setComment] = useState<string>('');
 
   const distanceTraveled = useMemo<string>(() => {
-    return activeRide?.distance.toFixed(2)!;
-  }, [activeRide]);
+    return postRide?.distance?.toFixed(2)!;
+  }, [postRide]);
 
   const timeTraveled = useMemo<string>(() => {
     const now = new Date().getTime();
-    const difference = now - activeRide?.timeStart?.getTime()!;
+    const difference = now - postRide?.timeStart?.getTime()!;
     const minutes = Math.ceil((difference / 1000 / 60) % 60);
     const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
     return `${hours ? `${hours}h ` : ''}${minutes}min`;
-  }, [activeRide]);
+  }, [postRide]);
 
   const rideCost = useMemo<string>(() => {
     return Intl.NumberFormat('uz-UZ', {
       style: 'currency',
       currency: 'UZS',
       maximumFractionDigits: 0,
-    }).format(activeRide?.cost!);
-  }, [activeRide]);
+    }).format(postRide?.cost!);
+  }, [postRide]);
 
   const onClose = () => {
     if (!comment.trim()) {
       const commentOnRide: IComment = {
         text: comment,
         createdAt: new Date(),
-        rideId: activeRide?.id!,
+        rideId: postRide?.id!,
       };
       // TODO: save comment to db
     }
-    setShowPostRideModal(false);
+    setPostRide(null);
   };
 
   const handleCommentInput = useCallback(
@@ -67,7 +65,7 @@ const PostRideModal: FC<IProps> = ({}) => {
   );
 
   return (
-    <Modal isOpen={showPostRideModal} onClose={onClose} isCentered>
+    <Modal isOpen={!!postRide} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader fontSize="1.5rem">Thank You!</ModalHeader>

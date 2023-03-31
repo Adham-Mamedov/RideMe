@@ -19,3 +19,7 @@ export const excludeFromArray = <T, Key extends keyof T>(
   }
   return models;
 };
+
+export const pickRandomFromArray = <T>(array: T[]): T => {
+  return array[Math.floor(Math.random() * array.length)];
+};

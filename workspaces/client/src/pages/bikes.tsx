@@ -27,7 +27,7 @@ const HomePage: NextPage = () => {
   const pageHeight = `calc(100vh - ${navBarHeight}px)`;
 
   return (
-    <ClientPrimaryLayout authRequired>
+    <ClientPrimaryLayout>
       <Flex minH={pageHeight}>
         <StationsSideBar
           onClick={showStationDetails}
@@ -47,5 +47,7 @@ const HomePage: NextPage = () => {
     </ClientPrimaryLayout>
   );
 };
+
+export { getAuthServerSideProps as getServerSideProps } from '@client/utils/getAuthServerSideProps';
 
 export default HomePage;

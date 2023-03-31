@@ -50,7 +50,7 @@ model Bike {
   wheelSize         Int
   recommendedHeight Int
   freeMinutes       Int
-  pricePerMinute    Int
+  pricePerMinute    Float
 
   @@map("bikes")
 }
@@ -63,8 +63,8 @@ model Ride {
   stationToId   String?   @map("stationToId") @db.ObjectId
   timeStart     DateTime  @default(now())
   timeEnd       DateTime?
-  cost          Int       @default(0)
-  distance      Int       @default(0)
+  cost          Float     @default(0)
+  distance      Float     @default(0)
 
   @@map("rides")
 }

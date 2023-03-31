@@ -1,5 +1,14 @@
 import NextImage from 'next/image';
-import { Dispatch, FC, memo, SetStateAction, useMemo } from 'react';
+import {
+  Dispatch,
+  FC,
+  memo,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   Box,
   Button,
@@ -21,7 +30,11 @@ import {
 } from '@chakra-ui/react';
 import { MdDirectionsBike } from 'react-icons/md';
 
+import Loader from '@client/components/shared/Loader';
+
 import { useGlobalStore } from '@client/stores/GlobalStore';
+import { useNotificationStore } from '@client/stores/NotificationStore';
+import { useCreateRide } from '@client/hooks/requests/rides';
 
 import { IStation } from '@shared/types/assets.types';
 
@@ -36,16 +49,49 @@ interface IProps {
 }
 
 const StationDrawer: FC<IProps> = ({ station, setStation }) => {
-  const onClose = () => setStation(null);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
 
+  const displayError = useNotificationStore((state) => state.displayError);
+  const activeRide = useGlobalStore((state) => state.activeRide);
   const getBikesByStationId = useGlobalStore(
     (state) => state.getBikesByStationId
   );
+
+  const { mutateAsync: rentBike, isLoading } = useCreateRide();
+
+  const onClose = useCallback(() => setStation(null), [setStation]);
 
   const bikes = useMemo(
     () => (station ? getBikesByStationId(station.id) : []),
     [station, getBikesByStationId]
   );
+
+  const noBikesAvailable = useMemo(() => bikes.length === 0, [bikes]);
+
+  const handleRent = useCallback(async () => {
+    if (activeRide) {
+      return displayError({ message: 'You already have an active ride' });
+    }
+    if (station && bikes[activeTabIndex]) {
+      try {
+        await rentBike({
+          stationFromId: station.id!,
+          bikeId: bikes[activeTabIndex].id!,
+        });
+        onClose();
+      } catch {}
+    }
+  }, [
+    activeRide,
+    station,
+    bikes,
+    activeTabIndex,
+    rentBike,
+    onClose,
+    displayError,
+  ]);
+
+  useEffect(() => setActiveTabIndex(0), [station]);
 
   if (!station) return null;
 
@@ -68,7 +114,23 @@ const StationDrawer: FC<IProps> = ({ station, setStation }) => {
           <Box>
             <Text fontSize="1.125rem">Available Bikes</Text>
           </Box>
-          <Tabs variant="unstyled">
+          {noBikesAvailable ? (
+            <Text
+              color="textGray"
+              fontSize="1.5rem"
+              position="absolute"
+              top="50%"
+              left="50%"
+              transform="translate(-50%)"
+            >
+              No bikes available
+            </Text>
+          ) : null}
+          <Tabs
+            variant="unstyled"
+            index={activeTabIndex}
+            onChange={(index) => setActiveTabIndex(index)}
+          >
             <TabList>
               {bikes.map((bike) => (
                 <Tab key={bike.id}>{bike.title}</Tab>
@@ -139,15 +201,18 @@ const StationDrawer: FC<IProps> = ({ station, setStation }) => {
         </DrawerBody>
 
         <DrawerFooter>
-          <Button
-            variant="primary"
-            colorScheme="messenger"
-            gap="0.4rem"
-            onClick={() => {}}
-          >
-            Rent
-            <MdDirectionsBike size="1.75rem" />
-          </Button>
+          {noBikesAvailable ? null : (
+            <Button
+              variant="primary"
+              colorScheme="messenger"
+              gap="0.4rem"
+              onClick={handleRent}
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader size="32px" /> : 'Rent'}
+              <MdDirectionsBike size="1.75rem" />
+            </Button>
+          )}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { IBike, IStation } from '@shared/types/assets.types';
+import { IBike, IRide, IStation } from '@shared/types/assets.types';
 
 interface IAdminStore {
   loading: boolean;
@@ -11,6 +11,8 @@ interface IAdminStore {
   setStations: (stations: IStation[]) => void;
   getBikesByStationId: (stationId: IStation['id']) => IBike[];
   getStationById: (stationId: IStation['id']) => IStation | undefined;
+  rides: IRide[];
+  setRides: (rides: IRide[]) => void;
 }
 
 export const useAdminStore = create<IAdminStore>()((set, get) => ({
@@ -30,4 +32,6 @@ export const useAdminStore = create<IAdminStore>()((set, get) => ({
   getStationById: (stationId: IStation['id']) => {
     return get().stations.find((station) => station.id === stationId);
   },
+  rides: [],
+  setRides: (rides: IRide[]) => set(() => ({ rides })),
 }));

@@ -26,9 +26,13 @@ const StationsSideBar: FC<IProps> = ({ onClick, activeStation }) => {
   const [searchText, setSearchText] = useState<string>('');
 
   const stations = useGlobalStore((state) => state.stations);
+  const bikes = useGlobalStore((state) => state.bikes);
   const filteredStations = useGlobalStore((state) => state.filteredStations);
   const setFilteredStations = useGlobalStore(
     (state) => state.setFilteredStations
+  );
+  const getBikesByStationId = useGlobalStore(
+    (state) => state.getBikesByStationId
   );
 
   const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +46,7 @@ const StationsSideBar: FC<IProps> = ({ onClick, activeStation }) => {
         station.title.toLowerCase().includes(searchText.toLowerCase())
       )
     );
-  }, [setFilteredStations, searchText, stations]);
+  }, [setFilteredStations, searchText, stations, bikes]);
 
   return (
     <Flex
@@ -76,7 +80,7 @@ const StationsSideBar: FC<IProps> = ({ onClick, activeStation }) => {
           <Text color="textGray">No results found</Text>
         )}
         {filteredStations.map((station) => {
-          const bikeCount = station.bikes.length;
+          const bikeCount = getBikesByStationId(station.id, true).length;
           const bikeColor = bikeCount > 0 ? 'success' : 'critical';
           return (
             <ListItem
