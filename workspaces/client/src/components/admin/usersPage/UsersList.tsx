@@ -24,6 +24,7 @@ import { useAdminStore } from '@client/stores/AdminStore';
 
 import { IUser } from '@shared/types/auth.types';
 import { Role } from '@shared/enums';
+import { useAuthStore } from '@client/stores/AuthStore';
 
 const PAGE_SIZE = 10;
 
@@ -36,6 +37,7 @@ const UsersList: FC<IProps> = ({}) => {
 
   const loading = useAdminStore((state) => state.loading);
   const users = useAdminStore((state) => state.users);
+  const currentUser = useAuthStore((state) => state.user);
 
   const currentUsers = useMemo(
     () => users.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE),
@@ -80,35 +82,37 @@ const UsersList: FC<IProps> = ({}) => {
                     </Td>
                     <Td>{user.email}</Td>
                     <Td color={color}>{user.role}</Td>
-                    <Td display="flex" gap="0.5rem">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        colorScheme="messenger"
-                        gap="0.4rem"
-                        p="0.5rem"
-                        onClick={() => {
-                          setIsEditUserModalOpen(true);
-                          setUserToEdit(user);
-                        }}
-                      >
-                        <MdModeEdit size="1.75rem" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        colorScheme="red"
-                        gap="0.4rem"
-                        p="0.5rem"
-                        onClick={() => {
-                          deleteUser(user.id);
-                        }}
-                      >
-                        <MdDelete size="1.75rem" />
-                        Remove
-                      </Button>
-                    </Td>
+                    {currentUser?.role === Role.Owner ? (
+                      <Td display="flex" gap="0.5rem">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          colorScheme="messenger"
+                          gap="0.4rem"
+                          p="0.5rem"
+                          onClick={() => {
+                            setIsEditUserModalOpen(true);
+                            setUserToEdit(user);
+                          }}
+                        >
+                          <MdModeEdit size="1.75rem" />
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          colorScheme="red"
+                          gap="0.4rem"
+                          p="0.5rem"
+                          onClick={() => {
+                            deleteUser(user.id);
+                          }}
+                        >
+                          <MdDelete size="1.75rem" />
+                          Remove
+                        </Button>
+                      </Td>
+                    ) : null}
                   </Tr>
                 );
               })}
