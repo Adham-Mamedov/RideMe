@@ -1,5 +1,7 @@
 import { INavLink, IAboutUsStatistics } from '@shared/types/client.types';
 import { IBike, IStation } from '@shared/types/assets.types';
+import { IUser } from '@shared/types/auth.types';
+import { Role } from '@shared/enums';
 
 export const unauthenticatedLinks: INavLink[] = [
   { label: 'Login', href: '/login', type: 'link' },
@@ -48,4 +50,14 @@ export const defaultBikeData: IBike = {
   pricePerMinute: 0,
   isAvailable: true,
   isBroken: false,
+};
+
+export const defaultUserData: IUser = {
+  card: {
+    number: '',
+    expDate: '',
+  },
+  email: '',
+  name: '',
+  role: Role.User,
 };

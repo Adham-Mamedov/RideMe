@@ -21,6 +21,10 @@ export enum Role {
 export enum EErrorMessages {
   UserAlreadyExists = 'User already exists',
   UserNotFound = 'User not found',
+  CreateUserFailed = 'Failed to create user',
+  EditUserFailed = 'Failed to edit user',
+  DeleteUserFailed = 'Failed to delete user',
+  DropUsersFailed = 'Failed to drop users',
   InternalServerError = 'Internal server error',
   FailedToRefreshToken = 'Failed to refresh token',
   InvalidRefreshToken = 'Invalid refresh token',
@@ -67,4 +71,7 @@ export enum EReactQueryKeys {
   ridesUpdate = 'ridesUpdate',
   comments = 'comments',
   commentsCreate = 'commentsCreate',
+  usersCreate = 'usersCreate',
+  usersUpdate = 'usersUpdate',
+  usersDelete = 'usersDelete',
 }

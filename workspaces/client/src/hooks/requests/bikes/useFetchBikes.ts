@@ -9,7 +9,6 @@ import { EReactQueryKeys, ERoute } from '@shared/enums';
 const useFetchBikes = () => {
   const setAdminBikes = useAdminStore((state) => state.setBikes);
 
-  console.log('FETCH BIKES');
   const axios = useAuthAxios();
 
   return useQuery(

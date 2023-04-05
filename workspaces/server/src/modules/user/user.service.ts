@@ -17,7 +17,12 @@ import AppConfig from '@server/app.config';
 import { exclude, excludeFromArray } from '@shared/utils/object.utils';
 
 import { EErrorMessages } from '@shared/enums';
-import { CreateUserDto } from '@server/modules/user/dto/user.dto';
+import {
+  CreateUserDto,
+  DeleteUserDto,
+  EditUserDto,
+} from '@server/modules/user/dto/user.dto';
+import { hideCardNumber } from '@shared/utils/string.utils';
 
 const defaultCard = {
   number: '1111222233334444',
@@ -35,7 +40,12 @@ export class UserService implements OnModuleInit {
 
   async getUsers(): Promise<User[]> {
     try {
-      const users = await this.prisma.user.findMany();
+      let users = await this.prisma.user.findMany();
+      users = users.map((user) => {
+        const decodedCardNumber = this.jwtService.decode(user.card.number);
+        user.card.number = hideCardNumber(decodedCardNumber as string);
+        return user;
+      });
       return excludeFromArray<User, 'password' | 'refreshToken'>(users, [
         'password',
         'refreshToken',
@@ -46,7 +56,7 @@ export class UserService implements OnModuleInit {
     }
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
+  async getUserByEmail(email: string) {
     try {
       return this.prisma.user.findUnique({
         where: {
@@ -88,7 +98,14 @@ export class UserService implements OnModuleInit {
       ]);
     } catch (error) {
       Logger.warn(error, 'UserService:createUser');
-      throw new BadRequestException(EErrorMessages.UserAlreadyExists);
+      if (
+        error.message.includes(
+          'Unique constraint failed on the constraint: `users_email_key`'
+        )
+      ) {
+        throw new BadRequestException(EErrorMessages.UserAlreadyExists);
+      }
+      throw new InternalServerErrorException();
     }
   }
 
@@ -122,15 +139,75 @@ export class UserService implements OnModuleInit {
     }
   }
 
+  async editUser(userDto: EditUserDto) {
+    try {
+      const id = userDto.id;
+      delete userDto.id;
+
+      const dbUser = await this.prisma.user.findUnique({
+        where: {
+          id,
+        },
+      });
+      delete dbUser.id;
+
+      const userCardNumber = this.jwtService.decode(dbUser.card.number);
+      const hiddenCardNumber = hideCardNumber(userCardNumber as string);
+
+      if (userDto.card.number !== hiddenCardNumber) {
+        userDto.card.number = this.jwtService.sign(userDto.card.number, {
+          secret: this.appConfig.jwtSecret,
+        });
+      } else {
+        userDto.card.number = dbUser.card.number;
+      }
+
+      const user = await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: { ...dbUser, ...userDto },
+      });
+      return exclude<User, 'password' | 'refreshToken'>(user, [
+        'password',
+        'refreshToken',
+      ]);
+    } catch (error) {
+      Logger.error(error, 'UserService:editUser');
+      if (
+        error.message.includes(
+          'Unique constraint failed on the constraint: `users_email_key`'
+        )
+      ) {
+        throw new BadRequestException(EErrorMessages.UserAlreadyExists);
+      }
+      throw new InternalServerErrorException(EErrorMessages.EditUserFailed);
+    }
+  }
+
+  async deleteUser(userDto: DeleteUserDto) {
+    try {
+      const id = userDto.id;
+      delete userDto.id;
+      const user = await this.prisma.user.delete({
+        where: {
+          id,
+        },
+      });
+      return !!user;
+    } catch (error) {
+      Logger.error(error, 'UserService:deleteUser');
+      throw new InternalServerErrorException(EErrorMessages.DeleteUserFailed);
+    }
+  }
+
   async dropUsers() {
     try {
       await this.prisma.user.deleteMany();
       return true;
     } catch (error) {
       Logger.error(error, 'UserService:dropUsers');
-      throw new InternalServerErrorException(
-        EErrorMessages.InternalServerError
-      );
+      throw new InternalServerErrorException(EErrorMessages.DropUsersFailed);
     }
   }
 

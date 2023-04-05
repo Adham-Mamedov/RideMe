@@ -15,15 +15,18 @@ import { useGlobalStore } from '@client/stores/GlobalStore';
 import { useAuthStore } from '@client/stores/AuthStore';
 
 import RideTimer from './RideTimer';
+import PostRideModal from '@client/components/shared/Navbar/PostRideModal';
+
+import useLogout from '@client/hooks/requests/useLogout';
 
 import {
   adminLinks,
   authenticatedLinks,
+  ownerLinks,
   unauthenticatedLinks,
 } from '@client/utils/defaults';
 import { INavLink } from '@shared/types/client.types';
-import PostRideModal from '@client/components/shared/Navbar/PostRideModal';
-import useLogout from '@client/hooks/requests/useLogout';
+import { Role } from '@shared/enums';
 
 interface IProps {}
 
@@ -41,12 +44,16 @@ const NavBar: FC<IProps> = ({}) => {
     if (!user) {
       links = unauthenticatedLinks;
     } else {
-      links = (user.role === 'User' ? authenticatedLinks : adminLinks).map(
-        (link) => {
-          if (link.label === 'Log out') link.onClick = logout;
-          return link;
-        }
-      );
+      const authLinks =
+        user.role === Role.Owner
+          ? ownerLinks
+          : user.role === Role.Admin
+          ? adminLinks
+          : authenticatedLinks;
+      links = authLinks.map((link) => {
+        if (link.label === 'Log out') link.onClick = logout;
+        return link;
+      });
     }
     return links;
   }, [logout, user]);
