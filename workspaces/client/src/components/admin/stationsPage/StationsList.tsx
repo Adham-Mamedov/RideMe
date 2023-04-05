@@ -122,12 +122,16 @@ const StationsList: FC<IProps> = ({}) => {
           </Heading>
         </TableContainer>
         <Flex justifyContent="space-between">
-          <Pagination
-            list={stations}
-            setPage={setPage}
-            page={page}
-            pageSize={PAGE_SIZE}
-          />
+          {stations.length > PAGE_SIZE ? (
+            <Pagination
+              list={stations}
+              setPage={setPage}
+              page={page}
+              pageSize={PAGE_SIZE}
+            />
+          ) : (
+            <div />
+          )}
 
           <Button
             variant="outline"
