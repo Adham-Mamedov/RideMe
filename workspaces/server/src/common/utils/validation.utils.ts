@@ -18,7 +18,7 @@ enum Env {
 class EnvVars {
   @IsEnum(Env) NODE_ENV: Env;
   @IsNumberString() APP_PORT: string;
-  @IsString() API_SECRET: string;
+  @IsString() APP_SECRET: string;
   @IsString() APP_HOST: string;
   @IsString() DATABASE_URL: string;
   @IsNumberString() BCRYPT_ROUNDS: string;
