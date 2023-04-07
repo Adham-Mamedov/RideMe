@@ -25,6 +25,7 @@ class EnvVars {
   @IsString() JWT_SECRET: string;
   @IsString() JWT_REFRESH_SECRET: string;
   @IsEmail() DEFAULT_OWNER_EMAIL: string;
+  @IsString() DEFAULT_OWNER_PASSWORD: string;
 }
 
 export const validateObject = <T>(type: ClassConstructor<T>, obj = {}) => {

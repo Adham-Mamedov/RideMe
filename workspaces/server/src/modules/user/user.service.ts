@@ -218,7 +218,7 @@ export class UserService implements OnModuleInit {
         {
           email: this.appConfig.defaultOwnerEmail,
           name: 'Adham Mamedov',
-          password: '123456',
+          password: this.appConfig.defaultOwnerPassword || '123456',
           card: defaultCard,
         },
         Role.Owner

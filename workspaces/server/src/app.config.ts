@@ -10,6 +10,7 @@ export default registerAs('appConfig', () => {
     JWT_SECRET,
     JWT_REFRESH_SECRET,
     DEFAULT_OWNER_EMAIL,
+    DEFAULT_OWNER_PASSWORD,
   } = process.env;
   const appPort = parseInt(APP_PORT, 10) || 3001;
 
@@ -22,5 +23,6 @@ export default registerAs('appConfig', () => {
     jwtSecret: JWT_SECRET,
     jwtRefreshSecret: JWT_REFRESH_SECRET,
     defaultOwnerEmail: DEFAULT_OWNER_EMAIL,
+    defaultOwnerPassword: DEFAULT_OWNER_PASSWORD,
   };
 });
