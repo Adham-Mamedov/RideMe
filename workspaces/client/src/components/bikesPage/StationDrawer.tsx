@@ -31,6 +31,7 @@ import {
 import { MdDirectionsBike } from 'react-icons/md';
 
 import Loader from '@client/components/shared/Loader';
+import QRCodeModal from '@client/components/shared/Navbar/QRCodeModal';
 
 import { useGlobalStore } from '@client/stores/GlobalStore';
 import { useNotificationStore } from '@client/stores/NotificationStore';
@@ -50,6 +51,7 @@ interface IProps {
 
 const StationDrawer: FC<IProps> = ({ station, setStation }) => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [isQRCodeModalOpen, setIsQRCodeModalOpen] = useState(false);
 
   const displayError = useNotificationStore((state) => state.displayError);
   const activeRide = useGlobalStore((state) => state.activeRide);
@@ -78,6 +80,7 @@ const StationDrawer: FC<IProps> = ({ station, setStation }) => {
           stationFromId: station.id!,
           bikeId: bikes[activeTabIndex].id!,
         });
+        setIsQRCodeModalOpen(false);
         onClose();
       } catch {}
     }
@@ -206,13 +209,14 @@ const StationDrawer: FC<IProps> = ({ station, setStation }) => {
               variant="primary"
               colorScheme="messenger"
               gap="0.4rem"
-              onClick={handleRent}
+              onClick={() => setIsQRCodeModalOpen(true)}
               disabled={isLoading}
             >
               {isLoading ? <Loader size="32px" /> : 'Rent'}
               <MdDirectionsBike size="1.75rem" />
             </Button>
           )}
+          <QRCodeModal onClose={handleRent} isOpen={isQRCodeModalOpen} />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

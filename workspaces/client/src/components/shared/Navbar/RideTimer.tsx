@@ -8,6 +8,8 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 
+import QRCodeModal from '@client/components/shared/Navbar/QRCodeModal';
+
 import { useGlobalStore } from '@client/stores/GlobalStore';
 import useUpdateRide from '@client/hooks/requests/rides/useUpdateRide';
 
@@ -18,6 +20,7 @@ interface IProps {}
 
 const RideTimer: FC<IProps> = () => {
   const [stopwatchTime, setStopwatchTime] = useState<string>('00:00:00');
+  const [isQRModalOpen, setIsQRModalOpen] = useState<boolean>(false);
 
   const stations = useGlobalStore((state) => state.stations);
   const activeRide = useGlobalStore((state) => state.activeRide);
@@ -35,6 +38,7 @@ const RideTimer: FC<IProps> = () => {
       distance: +(Math.random() * 5).toFixed(2),
     };
     updateRide(ride);
+    setIsQRModalOpen(false);
   }, [activeRide, stations, updateRide]);
 
   const getStopwatchTime = useCallback(() => {
@@ -70,35 +74,42 @@ const RideTimer: FC<IProps> = () => {
   }, [getStopwatchTime]);
 
   return (
-    <Popover>
-      <PopoverTrigger>
-        <Button
-          px={['1rem', null, '1.5rem']}
-          py={['0.5rem', null, '1rem']}
-          h={['44px', null, '60px']}
-          fontSize={['1rem', null, '1.25rem']}
-          borderRadius="45px"
-          variant="primary"
-        >
-          {stopwatchTime}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent w={'fit-content'}>
-        <PopoverArrow />
-        <PopoverBody
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          gap={['4px', '8px']}
-          fontWeight="700"
-        >
-          Finish current ride?
-          <Button colorScheme="red" onClick={finishRide} disabled={isLoading}>
-            Finish
+    <>
+      <Popover>
+        <PopoverTrigger>
+          <Button
+            px={['1rem', null, '1.5rem']}
+            py={['0.5rem', null, '1rem']}
+            h={['44px', null, '60px']}
+            fontSize={['1rem', null, '1.25rem']}
+            borderRadius="45px"
+            variant="primary"
+          >
+            {stopwatchTime}
           </Button>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
+        </PopoverTrigger>
+        <PopoverContent w={'fit-content'}>
+          <PopoverArrow />
+          <PopoverBody
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={['4px', '8px']}
+            fontWeight="700"
+          >
+            Finish current ride?
+            <Button
+              colorScheme="red"
+              onClick={() => setIsQRModalOpen(true)}
+              disabled={isLoading}
+            >
+              Finish
+            </Button>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+      <QRCodeModal onClose={finishRide} isOpen={isQRModalOpen} />
+    </>
   );
 };
 

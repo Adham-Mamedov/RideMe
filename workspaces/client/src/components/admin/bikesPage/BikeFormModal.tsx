@@ -240,7 +240,6 @@ const BikeFormModal: FC<IProps> = ({
             </FormControl>
           </Flex>
         </ModalBody>
-
         <ModalFooter>
           <Button type="submit" variant="primary" form="bike-form">
             {ctaText}
