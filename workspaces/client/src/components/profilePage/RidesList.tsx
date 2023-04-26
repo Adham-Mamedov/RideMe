@@ -106,12 +106,16 @@ const RidesList: FC<IProps> = ({}) => {
             </Text>
           </Heading>
         </TableContainer>
-        <Pagination
-          list={rides}
-          setPage={setPage}
-          page={page}
-          pageSize={PAGE_SIZE}
-        />
+        {rides.length > PAGE_SIZE ? (
+          <Pagination
+            list={rides}
+            setPage={setPage}
+            page={page}
+            pageSize={PAGE_SIZE}
+          />
+        ) : (
+          <div />
+        )}
       </Flex>
     </Container>
   );
