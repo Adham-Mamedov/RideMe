@@ -68,6 +68,7 @@ const AccountDetailsForm: FC<IProps> = ({
           onChange={(event) => updateFormData(event, 'name')}
           type="text"
           name="name"
+          maxLength={50}
         />
         <FormErrorMessage>{errors['name']}</FormErrorMessage>
       </FormControl>
@@ -78,6 +79,7 @@ const AccountDetailsForm: FC<IProps> = ({
           onChange={(event) => updateFormData(event, 'email')}
           type="email"
           name="email"
+          maxLength={50}
         />
         <FormErrorMessage>{errors['email']}</FormErrorMessage>
       </FormControl>
@@ -88,6 +90,8 @@ const AccountDetailsForm: FC<IProps> = ({
           onChange={(event) => updateFormData(event, 'password')}
           type="password"
           name="password"
+          maxLength={50}
+          minLength={6}
         />
         <FormErrorMessage>{errors['password']}</FormErrorMessage>
       </FormControl>
