@@ -13,7 +13,7 @@ export class UserEntity implements Partial<User> {
 
   @ApiProperty({
     example: {
-      number: '1234 5678 9012 3456',
+      number: '1234567890123456',
       expDate: '12/24',
     },
   })

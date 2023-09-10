@@ -1,36 +1,56 @@
 import {
   IsEmail,
-  IsObject,
+  IsNotEmpty,
+  IsNumberString,
   IsString,
+  Length,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '@prisma/client';
+import { Type } from 'class-transformer';
+import { IsValidExpDate } from '@server/common/decorators/validate.decorator';
+
+class UserCartDto {
+  @IsNumberString()
+  @Length(16, 16)
+  number: User['card']['number'];
+
+  @IsString()
+  @Length(5, 5)
+  @IsValidExpDate()
+  expDate: User['card']['expDate'];
+}
 
 export class CreateUserDto {
   @ApiProperty({ example: 'example@mail.com' })
+  @MaxLength(50)
   @IsEmail()
   email: User['email'];
 
   @ApiProperty({ example: 'password' })
-  @MaxLength(100)
-  @MinLength(1)
+  @MaxLength(50)
+  @MinLength(6)
   @IsString()
   password: User['password'];
 
   @ApiProperty({ example: 'Foo Bar' })
+  @MaxLength(50)
+  @IsNotEmpty()
   @IsString()
   name: User['name'];
 
   @ApiProperty({
     example: {
-      number: '1234 5678 9012 3456',
+      number: '1234567890123456',
       expDate: '12/24',
     },
   })
-  @IsObject()
-  card: User['card'];
+  @ValidateNested({ each: true })
+  @Type(() => UserCartDto)
+  card: UserCartDto;
 
   constructor(
     email: string,
@@ -48,30 +68,34 @@ export class CreateUserDto {
 export class EditUserDto {
   @ApiProperty({ example: 'userID' })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty()
   id: User['id'];
 
   @ApiProperty({ example: 'example@mail.com' })
+  @MaxLength(50)
   @IsEmail()
   email: User['email'];
 
   @ApiProperty({ example: 'Foo Bar' })
+  @MaxLength(50)
+  @IsNotEmpty()
   @IsString()
   name: User['name'];
 
   @ApiProperty({ example: 'User' })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty()
   role: User['role'];
 
   @ApiProperty({
     example: {
-      number: '1234 5678 9012 3456',
+      number: '1234567890123456',
       expDate: '12/24',
     },
   })
-  @IsObject()
-  card: User['card'];
+  @ValidateNested({ each: true })
+  @Type(() => UserCartDto)
+  card: UserCartDto;
 
   constructor(id: string, email: string, name: string, card: User['card']) {
     this.id = id;
@@ -84,7 +108,7 @@ export class EditUserDto {
 export class DeleteUserDto {
   @ApiProperty({ example: 'userID' })
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty()
   id: User['id'];
 
   constructor(id: string) {
