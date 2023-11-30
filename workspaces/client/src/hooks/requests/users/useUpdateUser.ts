@@ -14,8 +14,12 @@ const useUpdateUser = () => {
 
   return useMutation(
     EReactQueryKeys.usersUpdate,
-    (user: IUser) =>
-      axios.put<IUser>(`${ERoute.Users}/edit`, user).then(({ data }) => data),
+    (user: IUser) => {
+      user.card.number = user.card.number.replace(/\s/g, '');
+      return axios
+        .put<IUser>(`${ERoute.Users}/edit`, user)
+        .then(({ data }) => data);
+    },
     {
       retry: 2,
       onSuccess: () => {
