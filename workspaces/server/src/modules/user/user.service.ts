@@ -154,7 +154,7 @@ export class UserService implements OnModuleInit {
       const userCardNumber = this.jwtService.decode(dbUser.card.number);
       const hiddenCardNumber = hideCardNumber(userCardNumber as string);
 
-      if (userDto.card.number !== hiddenCardNumber) {
+      if (userDto.card.number !== hiddenCardNumber.replace(/\s/g, '')) {
         userDto.card.number = this.jwtService.sign(userDto.card.number, {
           secret: this.appConfig.jwtSecret,
         });

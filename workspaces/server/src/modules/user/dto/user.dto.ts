@@ -24,6 +24,16 @@ class UserCartDto {
   expDate: User['card']['expDate'];
 }
 
+class UserCartEditDto {
+  @Length(16, 16)
+  number: User['card']['number'];
+
+  @IsString()
+  @Length(5, 5)
+  @IsValidExpDate()
+  expDate: User['card']['expDate'];
+}
+
 export class CreateUserDto {
   @ApiProperty({ example: 'example@mail.com' })
   @MaxLength(50)
@@ -94,8 +104,8 @@ export class EditUserDto {
     },
   })
   @ValidateNested({ each: true })
-  @Type(() => UserCartDto)
-  card: UserCartDto;
+  @Type(() => UserCartEditDto)
+  card: UserCartEditDto;
 
   constructor(id: string, email: string, name: string, card: User['card']) {
     this.id = id;

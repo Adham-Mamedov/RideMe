@@ -10,6 +10,7 @@
     "client": "dotenv -e .env yarn workspace client",
     "server": "dotenv -e .env yarn workspace server",
     "db:init": "dotenv -e .env yarn workspace server prisma:push",
+    "db:generate": "dotenv -e .env yarn workspace server prisma:push",
     "clean:outputs": "rimraf workspaces/client/.next workspaces/server/dist",
     "clean:modules": "rimraf node_modules workspaces/client/node_modules workspaces/server/node_modules",
     "clean:all": "yarn clean:outputs && yarn clean:modules",
@@ -19,7 +20,7 @@
     "ncu:upgrade": "yarn ncu:all && yarn clean:all && rm -rf yarn.lock && yarn",
     "pretify": "concurrently --kill-others-on-fail -p \" {name} \" -n \"CLIENT,SERVER\" -c \"bgBlue.bold,bgCyan.bold\"",
     "prebuild": "yarn clean:outputs",
-    "build": "cross-env NODE_ENV=production yarn server build && yarn client build",
+    "build": "yarn db:generate && cross-env NODE_ENV=production yarn server build && yarn client build",
     "dev": "cross-env NODE_ENV=development yarn pretify \"yarn client dev\" \"yarn server dev\"",
     "start": "cross-env NODE_ENV=production yarn pretify \"yarn client start\" \"yarn server start\""
   },
